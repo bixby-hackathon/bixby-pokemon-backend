@@ -3,7 +3,7 @@
 https://bixby-pokemon-demo.herokuapp.com/pokemon/pikachu
 
 returns:
-``
+```
 {
 "id": 25,
 "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
@@ -17,4 +17,4 @@ returns:
 "statSpecialDefense": 50,
 "statSpeed": 90
 }
-``
+```
