@@ -1,2 +1,1 @@
-# bixby-pokemon-backend
-Backend used to parse data properly
+# bixby pokemon backend
