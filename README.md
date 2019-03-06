@@ -3,7 +3,7 @@
 https://bixby-pokemon-demo.herokuapp.com/pokemon/pikachu
 
 returns:
-```
+```javascript
 {
   "id": 25,
   "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
