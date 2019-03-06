@@ -6,12 +6,34 @@ const P = new Pokedex();
 export default ({ config }) => {
   let api = Router();
 
+  const getSprites = sprites => {
+    const spritesArray = [];
+    if (sprites.front_default) {
+      spritesArray.push(sprites.front_default);
+    }
+    if (sprites.back_default) {
+      spritesArray.push(sprites.back_default);
+    }
+    if (sprites.front_shiny) {
+      spritesArray.push(sprites.front_shiny);
+    }
+    if (sprites.back_shiny) {
+      spritesArray.push(sprites.back_shiny);
+    }
+    return spritesArray;
+  };
+
+  const removeLinebreaks = string => {
+    return string.replace(/\n|\r/g, ' ');
+  };
+
   api.get('/:name', async (req, res) => {
     try {
       const pokemon = await P.getPokemonByName(req.params.name);
       const formattedPokemon = {};
       const speciesInfo = await P.getPokemonSpeciesByName(req.params.name);
       const types = [];
+      const sprites = getSprites(pokemon.sprites);
 
       pokemon.types.forEach(type => {
         types.push(type.type.name);
@@ -20,10 +42,12 @@ export default ({ config }) => {
       formattedPokemon.id = pokemon.id;
       formattedPokemon.species = pokemon.name;
       formattedPokemon.sprite = pokemon.sprites.front_default;
+      formattedPokemon.sprites = sprites;
       formattedPokemon.types = types;
-      formattedPokemon.pokedexEntry = speciesInfo.flavor_text_entries.find(
-        o => o.language.name === 'en',
-      ).flavor_text;
+      formattedPokemon.pokedexEntry = removeLinebreaks(
+        speciesInfo.flavor_text_entries.find(o => o.language.name === 'en')
+          .flavor_text,
+      );
       formattedPokemon.height = pokemon.height;
       formattedPokemon.weight = pokemon.weight;
       formattedPokemon.statHp = pokemon.stats.find(
