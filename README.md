@@ -2,7 +2,6 @@
 
 https://bixby-pokemon-demo.herokuapp.com/pokemon/pikachu
 
-returns:
 ```javascript
 {
   "id": 25,
