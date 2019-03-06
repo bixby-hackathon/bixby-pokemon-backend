@@ -1,7 +1,9 @@
 # Bixby Pokemon Backend
 
-Built this to format the data for easier consumption in Bixby. This server also caches the responses from https://pokeapi.co/api/v2/ for obvious courtesy reasons.
+Built this to format the data for easier consumption in Bixby.
+This server also caches the responses from https://pokeapi.co/api/v2/ for obvious courtesy reasons.
 
+This is deployed at the following free herokuapp (along with a sample API endpoint):
 https://bixby-pokemon-demo.herokuapp.com/pokemon/pikachu
 
 ```javascript
