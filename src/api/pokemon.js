@@ -24,7 +24,7 @@ export default ({ config }) => {
   };
 
   const removeLinebreaks = string => {
-    return string.replace(/\n|\r/g, ' ');
+    return string.replace(/\n/g, ' ');
   };
 
   api.get('/:name', async (req, res) => {
