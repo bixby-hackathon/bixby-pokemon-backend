@@ -18,7 +18,7 @@ export default ({ config }) => {
       });
 
       formattedPokemon.id = pokemon.id;
-      formattedPokemon.name = pokemon.name;
+      formattedPokemon.species = pokemon.name;
       formattedPokemon.sprite = pokemon.sprites.front_default;
       formattedPokemon.types = types;
       formattedPokemon.pokedexEntry = speciesInfo.flavor_text_entries.find(
