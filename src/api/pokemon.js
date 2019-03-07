@@ -52,8 +52,8 @@ export default ({ config }) => {
         speciesInfo.flavor_text_entries.find(o => o.language.name === 'en')
           .flavor_text,
       );
-      formattedPokemon.height = pokemon.height;
-      formattedPokemon.weight = pokemon.weight;
+      formattedPokemon.height = pokemon.height / 10;
+      formattedPokemon.weight = pokemon.weight / 10;
       formattedPokemon.statHp = pokemon.stats.find(
         o => o.stat.name === 'attack',
       ).base_stat;
