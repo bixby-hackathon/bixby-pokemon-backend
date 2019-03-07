@@ -45,9 +45,19 @@ export default ({ config }) => {
 
   api.get('/:name', async (req, res) => {
     try {
-      const query = replaceSpaces(req.params.name);
+      let query = '';
+      if (req.params.name === 'meowstic') {
+        query = 'meowstic-male';
+      } else {
+        query = replaceSpaces(req.params.name);
+      }
+      let speciesInfo = {};
       const pokemon = await P.getPokemonByName(query);
-      const speciesInfo = await P.getPokemonSpeciesByName(query);
+      if (query === 'meowstic-male' || 'meowstic-female') {
+        speciesInfo = await P.getPokemonSpeciesByName('meowstic');
+      } else {
+        speciesInfo = await P.getPokemonSpeciesByName(query);
+      }
       const formattedPokemon = {};
       const abilities = pokemon.abilities;
       const ability1 = abilities.find(o => o.slot === 1);
@@ -86,7 +96,6 @@ export default ({ config }) => {
       formattedPokemon.species = capitalizeFirstLetter(pokemon.name);
       formattedPokemon.sprite = pokemon.sprites.front_default;
       formattedPokemon.sprites = getSprites(pokemon.sprites);
-      // formattedPokemon.types = getTypes(pokemon.types);
       if (pokemon.types.length > 1) {
         formattedPokemon.type1 = pokemon.types[1].type.name;
         formattedPokemon.type2 = pokemon.types[0].type.name;
@@ -120,7 +129,7 @@ export default ({ config }) => {
 
       res.status(200).json(formattedPokemon);
     } catch (error) {
-      res.status(404).json({ message: 'error' });
+      res.status(404).json({ message: error.message });
     }
   });
 
