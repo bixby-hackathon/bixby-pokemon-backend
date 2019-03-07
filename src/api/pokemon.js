@@ -6,6 +6,10 @@ const P = new Pokedex();
 export default ({ config }) => {
   let api = Router();
 
+  const replaceSpaces = string => {
+    return string.replace(/ /g, '-');
+  };
+
   const getSprites = sprites => {
     const spritesArray = [];
     if (sprites.front_default) {
@@ -41,8 +45,11 @@ export default ({ config }) => {
 
   api.get('/:name', async (req, res) => {
     try {
-      const pokemon = await P.getPokemonByName(req.params.name);
-      const speciesInfo = await P.getPokemonSpeciesByName(req.params.name);
+      console.log(req.params.name);
+      const query = replaceSpaces(req.params.name);
+      console.log(query);
+      const pokemon = await P.getPokemonByName(query);
+      const speciesInfo = await P.getPokemonSpeciesByName(query);
       const formattedPokemon = {};
 
       formattedPokemon.id = pokemon.id;
