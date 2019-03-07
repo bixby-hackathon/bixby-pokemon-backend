@@ -29,10 +29,6 @@ app.use(bodyParser.json());
 // api router
 app.use('/pokemon', pokemon({ config }));
 
-app.get('*', function(request, response) {
-  response.sendFile(path.resolve(__dirname, './', 'signin.html'));
-});
-
 app.server.listen(process.env.PORT || config.port, () => {
   console.log(`Started on port ${app.server.address().port}`);
 });

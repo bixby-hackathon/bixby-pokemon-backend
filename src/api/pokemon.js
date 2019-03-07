@@ -9,16 +9,16 @@ export default ({ config }) => {
   const getSprites = sprites => {
     const spritesArray = [];
     if (sprites.front_default) {
-      spritesArray.push(sprites.front_default);
+      spritesArray.push({ url: sprites.front_default });
     }
     if (sprites.back_default) {
-      spritesArray.push(sprites.back_default);
+      spritesArray.push({ url: sprites.back_default });
     }
     if (sprites.front_shiny) {
-      spritesArray.push(sprites.front_shiny);
+      spritesArray.push({ url: sprites.front_shiny });
     }
     if (sprites.back_shiny) {
-      spritesArray.push(sprites.back_shiny);
+      spritesArray.push({ url: sprites.back_shiny });
     }
     return spritesArray;
   };
