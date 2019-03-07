@@ -53,7 +53,7 @@ export default ({ config }) => {
       }
       let speciesInfo = {};
       const pokemon = await P.getPokemonByName(query);
-      if (query === 'meowstic-male' || 'meowstic-female') {
+      if (query === 'meowstic-male' || query === 'meowstic-female') {
         speciesInfo = await P.getPokemonSpeciesByName('meowstic');
       } else {
         speciesInfo = await P.getPokemonSpeciesByName(query);
@@ -94,6 +94,9 @@ export default ({ config }) => {
 
       formattedPokemon.id = pokemon.id;
       formattedPokemon.species = capitalizeFirstLetter(pokemon.name);
+      if (query === 'meowstic-male' || query === 'meowstic-female') {
+        formattedPokemon.species = 'Meowstic';
+      }
       formattedPokemon.sprite = pokemon.sprites.front_default;
       formattedPokemon.sprites = getSprites(pokemon.sprites);
       if (pokemon.types.length > 1) {
