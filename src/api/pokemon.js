@@ -82,7 +82,6 @@ export default ({ config }) => {
         formattedPokemon.ability3 = ability3.ability.name;
       }
 
-      formattedPokemon.ability3name = formattedPokemon.ability3.name;
       formattedPokemon.id = pokemon.id;
       formattedPokemon.species = capitalizeFirstLetter(pokemon.name);
       formattedPokemon.sprite = pokemon.sprites.front_default;
