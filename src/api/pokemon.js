@@ -31,23 +31,31 @@ export default ({ config }) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
+  const getTypes = types => {
+    const typesArray = [];
+    types.forEach(type => {
+      typesArray.push(type.type.name);
+    });
+    return typesArray;
+  };
+
   api.get('/:name', async (req, res) => {
     try {
       const pokemon = await P.getPokemonByName(req.params.name);
-      const formattedPokemon = {};
       const speciesInfo = await P.getPokemonSpeciesByName(req.params.name);
-      const types = [];
-      const sprites = getSprites(pokemon.sprites);
-
-      pokemon.types.forEach(type => {
-        types.push(type.type.name);
-      });
+      const formattedPokemon = {};
 
       formattedPokemon.id = pokemon.id;
       formattedPokemon.species = capitalizeFirstLetter(pokemon.name);
       formattedPokemon.sprite = pokemon.sprites.front_default;
-      formattedPokemon.sprites = sprites;
-      formattedPokemon.types = types;
+      formattedPokemon.sprites = getSprites(pokemon.sprites);
+      // formattedPokemon.types = getTypes(pokemon.types);
+      if (pokemon.types.length > 1) {
+        formattedPokemon.type1 = pokemon.types[1].type.name;
+        formattedPokemon.type2 = pokemon.types[0].type.name;
+      } else {
+        formattedPokemon.type1 = pokemon.types[0].type.name;
+      }
       formattedPokemon.pokedexEntry = removeLinebreaks(
         speciesInfo.flavor_text_entries.find(o => o.language.name === 'en')
           .flavor_text,
