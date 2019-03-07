@@ -9,11 +9,7 @@ export default ({ config }) => {
   const getSprites = sprites => {
     const spritesArray = [];
     if (sprites.front_default) {
-      spritesArray.push({
-        url: sprites.front_default,
-        title: 'poop',
-        subTitle: 'subPoop',
-      });
+      spritesArray.push({ url: sprites.front_default });
     }
     if (sprites.back_default) {
       spritesArray.push({ url: sprites.back_default });
