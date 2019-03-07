@@ -27,6 +27,10 @@ export default ({ config }) => {
     return string.replace(/\n/g, ' ');
   };
 
+  const capitalizeFirstLetter = string => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   api.get('/:name', async (req, res) => {
     try {
       const pokemon = await P.getPokemonByName(req.params.name);
@@ -40,7 +44,7 @@ export default ({ config }) => {
       });
 
       formattedPokemon.id = pokemon.id;
-      formattedPokemon.species = pokemon.name;
+      formattedPokemon.species = capitalizeFirstLetter(pokemon.name);
       formattedPokemon.sprite = pokemon.sprites.front_default;
       formattedPokemon.sprites = sprites;
       formattedPokemon.types = types;
