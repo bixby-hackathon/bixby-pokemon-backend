@@ -45,13 +45,44 @@ export default ({ config }) => {
 
   api.get('/:name', async (req, res) => {
     try {
-      console.log(req.params.name);
       const query = replaceSpaces(req.params.name);
-      console.log(query);
       const pokemon = await P.getPokemonByName(query);
       const speciesInfo = await P.getPokemonSpeciesByName(query);
       const formattedPokemon = {};
+      const abilities = pokemon.abilities;
+      const ability1 = abilities.find(o => o.slot === 1);
+      const ability2 = abilities.find(o => o.slot === 2);
+      const ability3 = abilities.find(o => o.slot === 3);
+      let ability1Resource = '';
+      let ability2Resource = '';
+      let ability3Resource = '';
 
+      if (ability1) {
+        ability1Resource = await P.resource(ability1.ability.url);
+        formattedPokemon.ability1Description = removeLinebreaks(
+          ability1Resource.effect_entries.find(o => o.language.name === 'en')
+            .short_effect,
+        );
+        formattedPokemon.ability1 = ability1.ability.name;
+      }
+      if (ability2) {
+        ability2Resource = await P.resource(ability2.ability.url);
+        formattedPokemon.ability2Description = removeLinebreaks(
+          ability2Resource.effect_entries.find(o => o.language.name === 'en')
+            .short_effect,
+        );
+        formattedPokemon.ability2 = ability2.ability.name;
+      }
+      if (ability3) {
+        ability3Resource = await P.resource(ability3.ability.url);
+        formattedPokemon.ability3Description = removeLinebreaks(
+          ability3Resource.effect_entries.find(o => o.language.name === 'en')
+            .short_effect,
+        );
+        formattedPokemon.ability3 = ability3.ability.name;
+      }
+
+      formattedPokemon.ability3name = formattedPokemon.ability3.name;
       formattedPokemon.id = pokemon.id;
       formattedPokemon.species = capitalizeFirstLetter(pokemon.name);
       formattedPokemon.sprite = pokemon.sprites.front_default;
