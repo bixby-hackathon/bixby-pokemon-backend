@@ -43,7 +43,7 @@ export default ({ config }) => {
     return typesArray;
   };
 
-  api.get('/:name', async (req, res) => {
+  api.get('/one/:name', async (req, res) => {
     try {
       let query = '';
       if (req.params.name === 'meowstic') {
@@ -136,7 +136,7 @@ export default ({ config }) => {
     }
   });
 
-  api.get('/more/:name', async (req, res) => {
+  api.get('/more', async (req, res) => {
     console.log(req.body);
     console.log(req.params);
     console.log(req.query);
