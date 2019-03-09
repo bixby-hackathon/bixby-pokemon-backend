@@ -1,53 +1,9 @@
 import { Router } from 'express';
 import Axios from 'axios';
 import Pokedex from 'pokedex-promise-v2';
-// import Sequelize from 'sequelize';
 import { sequelize } from '../models';
-// import { Pool, Client } from 'pg';
 var config = require('../config/config.json');
 const P = new Pokedex();
-
-// console.log(process.env.DATABASE_URL);
-// console.log(process.env.DATABASE_URL);
-// console.log(process.env.DATABASE_URL);
-// console.log(process.env.DATABASE_URL);
-// console.log(process.env.DATABASE_URL);
-// console.log(process.env.DATABASE_URL);
-// console.log(process.env.DATABASE_URL);
-// console.log(process.env.DATABASE_URL);
-
-// if (process.env.DATABASE_URL) {
-//   sequelize = new Sequelize(config.production);
-// } else {
-//   sequelize = new Sequelize(config.development);
-// }
-
-// const pool = new Pool({
-//   username: 'postgres',
-//   password: '',
-//   database: 'bixbydex',
-//   host: 'localhost',
-//   dialect: 'postgres',
-//   port: 5432,
-// });
-
-// pool.query('SELECT NOW()', (err, res) => {
-//   console.log(err, res);
-// });
-
-// const client = new Client({
-//   username: 'postgres',
-//   password: '',
-//   database: 'bixbydex',
-//   host: 'localhost',
-//   dialect: 'postgres',
-//   port: 5432,
-// });
-// client.connect();
-
-// client.query('SELECT NOW()', (err, res) => {
-//   console.log(err, res);
-// });
 
 const Search = require('../models').Search;
 
@@ -93,6 +49,8 @@ export default ({ config }) => {
 
   api.get('/one/:name', async (req, res) => {
     try {
+      const userId = req.query.userId;
+      console.log(userId);
       let query = '';
       if (req.params.name === 'meowstic') {
         query = 'meowstic-male';
@@ -179,6 +137,8 @@ export default ({ config }) => {
       ).base_stat;
 
       res.status(200).json(formattedPokemon);
+      const newThing = await Search.create({ userId, name: query });
+      console.log(newThing);
     } catch (error) {
       res.status(404).json({ message: error.message });
     }
@@ -287,8 +247,9 @@ export default ({ config }) => {
 
     try {
       const psqlQuery =
-        'SELECT name, COUNT(*) FROM "Searches" GROUP BY name ORDER BY count DESC';
-      // const results = await client.query(psqlQuery);
+        'SELECT name, COUNT(*) FROM "Searches" GROUP BY name ORDER BY count DESC LIMIT 10';
+
+      // const pokemon = await P.getPokemonByName(query);
       const results = await sequelize.query(psqlQuery, {
         type: sequelize.QueryTypes.SELECT,
       });
