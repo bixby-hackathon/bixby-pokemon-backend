@@ -1,27 +1,26 @@
 import { Router } from 'express';
 import Axios from 'axios';
 import Pokedex from 'pokedex-promise-v2';
-import Sequelize from 'sequelize';
+// import Sequelize from 'sequelize';
+import { sequelize } from '../models';
 // import { Pool, Client } from 'pg';
 var config = require('../config/config.json');
 const P = new Pokedex();
 
-let sequelize = '';
+// console.log(process.env.DATABASE_URL);
+// console.log(process.env.DATABASE_URL);
+// console.log(process.env.DATABASE_URL);
+// console.log(process.env.DATABASE_URL);
+// console.log(process.env.DATABASE_URL);
+// console.log(process.env.DATABASE_URL);
+// console.log(process.env.DATABASE_URL);
+// console.log(process.env.DATABASE_URL);
 
-console.log(process.env.DATABASE_URL);
-console.log(process.env.DATABASE_URL);
-console.log(process.env.DATABASE_URL);
-console.log(process.env.DATABASE_URL);
-console.log(process.env.DATABASE_URL);
-console.log(process.env.DATABASE_URL);
-console.log(process.env.DATABASE_URL);
-console.log(process.env.DATABASE_URL);
-
-if (process.env.DATABASE_URL) {
-  sequelize = new Sequelize(config.production);
-} else {
-  sequelize = new Sequelize(config.development);
-}
+// if (process.env.DATABASE_URL) {
+//   sequelize = new Sequelize(config.production);
+// } else {
+//   sequelize = new Sequelize(config.development);
+// }
 
 // const pool = new Pool({
 //   username: 'postgres',
