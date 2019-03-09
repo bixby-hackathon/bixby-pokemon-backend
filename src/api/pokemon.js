@@ -8,6 +8,15 @@ const P = new Pokedex();
 
 let sequelize = '';
 
+console.log(process.env.DATABASE_URL);
+console.log(process.env.DATABASE_URL);
+console.log(process.env.DATABASE_URL);
+console.log(process.env.DATABASE_URL);
+console.log(process.env.DATABASE_URL);
+console.log(process.env.DATABASE_URL);
+console.log(process.env.DATABASE_URL);
+console.log(process.env.DATABASE_URL);
+
 if (process.env.DATABASE_URL) {
   sequelize = new Sequelize(config.production);
 } else {
