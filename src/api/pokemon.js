@@ -1,7 +1,41 @@
 import { Router } from 'express';
 import Axios from 'axios';
 import Pokedex from 'pokedex-promise-v2';
+import Sequelize from 'sequelize';
+// import { Pool, Client } from 'pg';
+var config = require('../config/config.json');
 const P = new Pokedex();
+
+const sequelize = new Sequelize(config.development);
+
+// const pool = new Pool({
+//   username: 'postgres',
+//   password: '',
+//   database: 'bixbydex',
+//   host: 'localhost',
+//   dialect: 'postgres',
+//   port: 5432,
+// });
+
+// pool.query('SELECT NOW()', (err, res) => {
+//   console.log(err, res);
+// });
+
+// const client = new Client({
+//   username: 'postgres',
+//   password: '',
+//   database: 'bixbydex',
+//   host: 'localhost',
+//   dialect: 'postgres',
+//   port: 5432,
+// });
+// client.connect();
+
+// client.query('SELECT NOW()', (err, res) => {
+//   console.log(err, res);
+// });
+
+const Search = require('../models').Search;
 
 export default ({ config }) => {
   let api = Router();
@@ -227,6 +261,26 @@ export default ({ config }) => {
       ).base_stat;
 
       res.status(200).json(formattedPokemon);
+    } catch (error) {
+      res.status(404).json({ message: error.message });
+    }
+  });
+
+  api.get('/popular', async (req, res) => {
+    console.log(req.body);
+    console.log(req.params);
+    console.log(req.query);
+
+    try {
+      const psqlQuery =
+        'SELECT name, COUNT(*) FROM "Searches" GROUP BY name ORDER BY count DESC';
+      // const results = await client.query(psqlQuery);
+      const results = await sequelize.query(psqlQuery, {
+        type: sequelize.QueryTypes.SELECT,
+      });
+      console.log(results);
+      // const searches = await Search.findAll();
+      res.status(200).json(results);
     } catch (error) {
       res.status(404).json({ message: error.message });
     }

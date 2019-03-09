@@ -9,6 +9,8 @@ import config from './config.json';
 import path from 'path';
 import pokemon from './api/pokemon';
 
+import db from './models';
+
 let app = express();
 app.server = http.createServer(app);
 
@@ -23,7 +25,7 @@ app.use(
 );
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(middleware({ config }));
+app.use(middleware({ config, db }));
 app.use(bodyParser.json());
 
 // api router
