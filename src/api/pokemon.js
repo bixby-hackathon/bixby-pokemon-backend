@@ -6,7 +6,13 @@ import Sequelize from 'sequelize';
 var config = require('../config/config.json');
 const P = new Pokedex();
 
-const sequelize = new Sequelize(config.development);
+let sequelize = '';
+
+if (process.env.DATABASE_URL) {
+  sequelize = new Sequelize(config.production);
+} else {
+  sequelize = new Sequelize(config.development);
+}
 
 // const pool = new Pool({
 //   username: 'postgres',
