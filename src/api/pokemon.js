@@ -4,6 +4,7 @@ import { sequelize } from '../models';
 const P = new Pokedex();
 
 const Search = require('../models').Search;
+const Pokemon = require('../models').Pokemon;
 
 export default ({ config }) => {
   let api = Router();
@@ -55,92 +56,97 @@ export default ({ config }) => {
     return query;
   };
 
+  // const getPokemon = async name => {
+  //   try {
+  //     let query = setQuery(name);
+  //     let speciesInfo = {};
+  //     const pokemon = await P.getPokemonByName(query);
+  //     if (query === 'meowstic-male' || query === 'meowstic-female') {
+  //       speciesInfo = await P.getPokemonSpeciesByName('meowstic');
+  //     } else {
+  //       speciesInfo = await P.getPokemonSpeciesByName(query);
+  //     }
+  //     const formattedPokemon = {};
+  //     const abilities = pokemon.abilities;
+  //     const ability1 = abilities.find(o => o.slot === 1);
+  //     const ability2 = abilities.find(o => o.slot === 2);
+  //     const ability3 = abilities.find(o => o.slot === 3);
+  //     let ability1Resource = '';
+  //     let ability2Resource = '';
+  //     let ability3Resource = '';
+
+  //     if (ability1) {
+  //       ability1Resource = await P.resource(ability1.ability.url);
+  //       formattedPokemon.ability1Description = removeLinebreaks(
+  //         ability1Resource.effect_entries.find(o => o.language.name === 'en')
+  //           .short_effect,
+  //       );
+  //       formattedPokemon.ability1 = ability1.ability.name;
+  //     }
+  //     if (ability2) {
+  //       ability2Resource = await P.resource(ability2.ability.url);
+  //       formattedPokemon.ability2Description = removeLinebreaks(
+  //         ability2Resource.effect_entries.find(o => o.language.name === 'en')
+  //           .short_effect,
+  //       );
+  //       formattedPokemon.ability2 = ability2.ability.name;
+  //     }
+  //     if (ability3) {
+  //       ability3Resource = await P.resource(ability3.ability.url);
+  //       formattedPokemon.ability3Description = removeLinebreaks(
+  //         ability3Resource.effect_entries.find(o => o.language.name === 'en')
+  //           .short_effect,
+  //       );
+  //       formattedPokemon.ability3 = ability3.ability.name;
+  //     }
+
+  //     formattedPokemon.id = pokemon.id;
+  //     formattedPokemon.species = capitalizeFirstLetter(pokemon.name);
+  //     if (query === 'meowstic-male' || query === 'meowstic-female') {
+  //       formattedPokemon.species = 'Meowstic';
+  //     }
+  //     formattedPokemon.sprite = pokemon.sprites.front_default;
+  //     formattedPokemon.sprites = getSprites(pokemon.sprites);
+  //     if (pokemon.types.length > 1) {
+  //       formattedPokemon.type1 = pokemon.types[1].type.name;
+  //       formattedPokemon.type2 = pokemon.types[0].type.name;
+  //     } else {
+  //       formattedPokemon.type1 = pokemon.types[0].type.name;
+  //     }
+  //     formattedPokemon.pokedexEntry = removeLinebreaks(
+  //       speciesInfo.flavor_text_entries.find(o => o.language.name === 'en')
+  //         .flavor_text,
+  //     );
+  //     formattedPokemon.height = pokemon.height / 10;
+  //     formattedPokemon.weight = pokemon.weight / 10;
+  //     formattedPokemon.statHp = pokemon.stats.find(
+  //       o => o.stat.name === 'attack',
+  //     ).base_stat;
+  //     formattedPokemon.statAttack = pokemon.stats.find(
+  //       o => o.stat.name === 'attack',
+  //     ).base_stat;
+  //     formattedPokemon.statDefense = pokemon.stats.find(
+  //       o => o.stat.name === 'defense',
+  //     ).base_stat;
+  //     formattedPokemon.statSpecialAttack = pokemon.stats.find(
+  //       o => o.stat.name === 'special-attack',
+  //     ).base_stat;
+  //     formattedPokemon.statSpecialDefense = pokemon.stats.find(
+  //       o => o.stat.name === 'special-defense',
+  //     ).base_stat;
+  //     formattedPokemon.statSpeed = pokemon.stats.find(
+  //       o => o.stat.name === 'speed',
+  //     ).base_stat;
+
+  //     return formattedPokemon;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // };
+
   const getPokemon = async name => {
-    try {
-      let query = setQuery(name);
-      let speciesInfo = {};
-      const pokemon = await P.getPokemonByName(query);
-      if (query === 'meowstic-male' || query === 'meowstic-female') {
-        speciesInfo = await P.getPokemonSpeciesByName('meowstic');
-      } else {
-        speciesInfo = await P.getPokemonSpeciesByName(query);
-      }
-      const formattedPokemon = {};
-      const abilities = pokemon.abilities;
-      const ability1 = abilities.find(o => o.slot === 1);
-      const ability2 = abilities.find(o => o.slot === 2);
-      const ability3 = abilities.find(o => o.slot === 3);
-      let ability1Resource = '';
-      let ability2Resource = '';
-      let ability3Resource = '';
-
-      if (ability1) {
-        ability1Resource = await P.resource(ability1.ability.url);
-        formattedPokemon.ability1Description = removeLinebreaks(
-          ability1Resource.effect_entries.find(o => o.language.name === 'en')
-            .short_effect,
-        );
-        formattedPokemon.ability1 = ability1.ability.name;
-      }
-      if (ability2) {
-        ability2Resource = await P.resource(ability2.ability.url);
-        formattedPokemon.ability2Description = removeLinebreaks(
-          ability2Resource.effect_entries.find(o => o.language.name === 'en')
-            .short_effect,
-        );
-        formattedPokemon.ability2 = ability2.ability.name;
-      }
-      if (ability3) {
-        ability3Resource = await P.resource(ability3.ability.url);
-        formattedPokemon.ability3Description = removeLinebreaks(
-          ability3Resource.effect_entries.find(o => o.language.name === 'en')
-            .short_effect,
-        );
-        formattedPokemon.ability3 = ability3.ability.name;
-      }
-
-      formattedPokemon.id = pokemon.id;
-      formattedPokemon.species = capitalizeFirstLetter(pokemon.name);
-      if (query === 'meowstic-male' || query === 'meowstic-female') {
-        formattedPokemon.species = 'Meowstic';
-      }
-      formattedPokemon.sprite = pokemon.sprites.front_default;
-      formattedPokemon.sprites = getSprites(pokemon.sprites);
-      if (pokemon.types.length > 1) {
-        formattedPokemon.type1 = pokemon.types[1].type.name;
-        formattedPokemon.type2 = pokemon.types[0].type.name;
-      } else {
-        formattedPokemon.type1 = pokemon.types[0].type.name;
-      }
-      formattedPokemon.pokedexEntry = removeLinebreaks(
-        speciesInfo.flavor_text_entries.find(o => o.language.name === 'en')
-          .flavor_text,
-      );
-      formattedPokemon.height = pokemon.height / 10;
-      formattedPokemon.weight = pokemon.weight / 10;
-      formattedPokemon.statHp = pokemon.stats.find(
-        o => o.stat.name === 'attack',
-      ).base_stat;
-      formattedPokemon.statAttack = pokemon.stats.find(
-        o => o.stat.name === 'attack',
-      ).base_stat;
-      formattedPokemon.statDefense = pokemon.stats.find(
-        o => o.stat.name === 'defense',
-      ).base_stat;
-      formattedPokemon.statSpecialAttack = pokemon.stats.find(
-        o => o.stat.name === 'special-attack',
-      ).base_stat;
-      formattedPokemon.statSpecialDefense = pokemon.stats.find(
-        o => o.stat.name === 'special-defense',
-      ).base_stat;
-      formattedPokemon.statSpeed = pokemon.stats.find(
-        o => o.stat.name === 'speed',
-      ).base_stat;
-
-      return formattedPokemon;
-    } catch (error) {
-      throw error;
-    }
+    const pokemon = await Pokemon.findOne({ where: { name: name } });
+    return pokemon;
   };
 
   api.get('/one/:name', async (req, res) => {
@@ -149,7 +155,9 @@ export default ({ config }) => {
       const userId = req.query.userId;
       const formattedPokemon = await getPokemon(req.params.name);
       res.status(200).json(formattedPokemon);
-      const newThing = await Search.create({ userId, name: req.params.name });
+      if (formattedPokemon) {
+        Search.create({ userId, name: req.params.name });
+      }
     } catch (error) {
       throw error;
       res.status(404).json({ message: error.message });
@@ -170,26 +178,24 @@ export default ({ config }) => {
     try {
       const psqlQuery =
         'SELECT name, COUNT(*) FROM "Searches" GROUP BY name ORDER BY count DESC LIMIT 10';
-      // const pokemon = await P.getPokemonByName(query);
       const results = await sequelize.query(psqlQuery, {
         type: sequelize.QueryTypes.SELECT,
       });
 
       // map array to promises
-      // const promises = await results.map((result, i) => {
-      //   return getPokemon(result.name);
-      // });
-      // const promisesAll = await Promise.all(promises);
-      // wait until all promises are resolved
+      const promises = await results.map(async (result, i) => {
+        console.log('result', result);
+        const pokemon = await Pokemon.findOne({
+          where: { name: result.name },
+        });
+        const pokemonData = pokemon.dataValues;
+        pokemonData.count = result.count;
+        console.log(pokemonData);
+        return pokemonData;
+      });
+      const promisesAll = await Promise.all(promises);
 
-      // const formattedPokemon = await results.map(async result => {
-      //   const pokemon = {};
-      //   pokemon.count = result.count;
-      //   return pokemon;
-      // });
-
-      // const searches = await Search.findAll();
-      res.status(200).json(results);
+      res.status(200).json(promisesAll);
     } catch (error) {
       res.status(404).json({ message: error.message });
     }
