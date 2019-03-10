@@ -813,9 +813,11 @@ var allPokemon = [
 function generateSeedData(count, Sequelize) {
   var seedArray = [];
   for (i = 0; i < count; i++) {
+    var random = Math.floor(Math.random() * allPokemon.length);
     seedArray.push({
       userId: 0,
-      name: allPokemon[Math.floor(Math.random() * allPokemon.length)],
+      name: allPokemon[random],
+      pokedexNumber: random + 1,
       createdAt: new Date(),
       updatedAt: new Date(),
     });

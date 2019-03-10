@@ -1,8 +1,6 @@
 import { Router } from 'express';
-import Axios from 'axios';
 import Pokedex from 'pokedex-promise-v2';
 import { sequelize } from '../models';
-var config = require('../config/config.json');
 const P = new Pokedex();
 
 const Search = require('../models').Search;

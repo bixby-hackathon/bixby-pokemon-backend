@@ -8,8 +8,10 @@ import middleware from './middleware';
 import config from './config.json';
 import path from 'path';
 import pokemon from './api/pokemon';
-
 import db from './models';
+
+// import scrape from './utils/scrape';
+// scrape();
 
 let app = express();
 app.server = http.createServer(app);
