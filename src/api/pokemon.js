@@ -205,14 +205,21 @@ export default ({ config }) => {
   });
 
   api.get('/random/:quantity', async (req, res) => {
+    const idRange = {
+      pokedexNumber: {
+        $between: [1, 802],
+      },
+    };
     try {
       if (req.params.quantity == 1) {
         const randomPokemon = await Pokemon.findOne({
+          where: idRange,
           order: [[sequelize.literal('random()')]],
         });
         res.status(200).json(randomPokemon);
       } else {
         const randomPokemon = await Pokemon.findAll({
+          where: idRange,
           order: [[sequelize.literal('random()')]],
           limit: req.params.quantity,
         });
