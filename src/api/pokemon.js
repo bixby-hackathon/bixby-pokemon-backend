@@ -144,18 +144,13 @@ export default ({ config }) => {
   //   }
   // };
 
-  const getPokemon = async name => {
-    const pokemon = await Pokemon.findOne({ where: { name: name } });
-    return pokemon;
-  };
-
   api.get('/one/:name', async (req, res) => {
     try {
       const query = setQuery(req.params.name);
       const userId = req.query.userId;
-      const formattedPokemon = await getPokemon(req.params.name);
-      res.status(200).json(formattedPokemon);
-      if (formattedPokemon) {
+      const pokemon = await Pokemon.findOne({ where: { name: name } });
+      res.status(200).json(pokemon);
+      if (pokemon) {
         Search.create({ userId, name: req.params.name });
       }
     } catch (error) {
@@ -164,17 +159,24 @@ export default ({ config }) => {
     }
   });
 
-  api.get('/more', async (req, res) => {
-    console.log(req.body);
-    console.log(req.params);
-    console.log(req.query);
+  api.get('/id/:id', async (req, res) => {
+    try {
+      const query = setQuery(req.params.id);
+      const userId = req.query.userId;
+      const pokemon = await Pokemon.findOne({
+        where: { pokedexNumber: req.params.id },
+      });
+      res.status(200).json(pokemon);
+      if (pokemon) {
+        Search.create({ userId, name: pokemon.name });
+      }
+    } catch (error) {
+      throw error;
+      res.status(404).json({ message: error.message });
+    }
   });
 
   api.get('/popular', async (req, res) => {
-    console.log(req.body);
-    console.log(req.params);
-    console.log(req.query);
-
     try {
       const psqlQuery =
         'SELECT name, COUNT(*) FROM "Searches" GROUP BY name ORDER BY count DESC LIMIT 10';
@@ -196,6 +198,25 @@ export default ({ config }) => {
       const promisesAll = await Promise.all(promises);
 
       res.status(200).json(promisesAll);
+    } catch (error) {
+      res.status(404).json({ message: error.message });
+    }
+  });
+
+  api.get('/random/:quantity', async (req, res) => {
+    try {
+      if (req.params.quantity == 1) {
+        const randomPokemon = await Pokemon.findOne({
+          order: [[sequelize.literal('random()')]],
+        });
+        res.status(200).json(randomPokemon);
+      } else {
+        const randomPokemon = await Pokemon.findAll({
+          order: [[sequelize.literal('random()')]],
+          limit: req.params.quantity,
+        });
+        res.status(200).json(randomPokemon);
+      }
     } catch (error) {
       res.status(404).json({ message: error.message });
     }
