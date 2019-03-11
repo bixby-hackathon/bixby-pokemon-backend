@@ -146,9 +146,10 @@ export default ({ config }) => {
 
   api.get('/one/:name', async (req, res) => {
     try {
-      const query = setQuery(req.params.name);
       const userId = req.query.userId;
-      const pokemon = await Pokemon.findOne({ where: { name: name } });
+      const pokemon = await Pokemon.findOne({
+        where: { name: req.params.name },
+      });
       res.status(200).json(pokemon);
       if (pokemon) {
         Search.create({ userId, name: req.params.name });
