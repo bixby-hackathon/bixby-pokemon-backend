@@ -190,7 +190,7 @@ export default ({ config }) => {
         });
         const pokemonData = pokemon.dataValues;
         pokemonData.count = result.count;
-        console.log(pokemonData);
+        pokemonData.rank = i + 1;
         return pokemonData;
       });
       const promisesAll = await Promise.all(promises);
