@@ -10,7 +10,7 @@ import path from 'path';
 import pokemon from './api/pokemon';
 import db from './models';
 
-// import scrape from './utils/scrape';
+import scrape from './utils/scrape';
 // scrape();
 
 let app = express();

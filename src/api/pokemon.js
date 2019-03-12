@@ -143,12 +143,50 @@ export default ({ config }) => {
   //     throw error;
   //   }
   // };
+  const attributes = [
+    'name',
+    'species',
+    'pokedexNumber',
+    'ability1',
+    'ability1Description',
+    'ability2',
+    'ability2Description',
+    'ability3',
+    'ability3Description',
+    'sprite',
+    'sprites',
+    'type1',
+    'type2',
+    'pokedexEntry',
+    'height',
+    // 'weight',
+    'statHp',
+    'statAttack',
+    'statDefense',
+    'statSpecialAttack',
+    'statSpecialDefense',
+    'statSpeed',
+  ];
+
+  api.get('/raw/:id', async (req, res) => {
+    try {
+      const query = setQuery(req.params.id);
+      const pokemon = await Pokemon.findOne({
+        where: { pokedexNumber: req.params.id },
+      });
+      res.status(200).json(pokemon);
+    } catch (error) {
+      throw error;
+      res.status(404).json({ message: error.message });
+    }
+  });
 
   api.get('/one/:name', async (req, res) => {
     try {
       const userId = req.query.userId;
       const pokemon = await Pokemon.findOne({
         where: { name: req.params.name },
+        attributes: attributes,
       });
       res.status(200).json(pokemon);
       if (pokemon) {
@@ -166,6 +204,7 @@ export default ({ config }) => {
       const userId = req.query.userId;
       const pokemon = await Pokemon.findOne({
         where: { pokedexNumber: req.params.id },
+        attributes: attributes,
       });
       res.status(200).json(pokemon);
       if (pokemon) {
@@ -190,6 +229,7 @@ export default ({ config }) => {
         console.log('result', result);
         const pokemon = await Pokemon.findOne({
           where: { name: result.name },
+          attributes: attributes,
         });
         const pokemonData = pokemon.dataValues;
         pokemonData.count = result.count;
@@ -215,6 +255,7 @@ export default ({ config }) => {
         const randomPokemon = await Pokemon.findOne({
           where: idRange,
           order: [[sequelize.literal('random()')]],
+          attributes: attributes,
         });
         res.status(200).json(randomPokemon);
       } else {
@@ -222,6 +263,7 @@ export default ({ config }) => {
           where: idRange,
           order: [[sequelize.literal('random()')]],
           limit: req.params.quantity,
+          attributes: attributes,
         });
         res.status(200).json(randomPokemon);
       }

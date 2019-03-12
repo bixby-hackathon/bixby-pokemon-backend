@@ -2,6 +2,7 @@ import Pokedex from 'pokedex-promise-v2';
 
 const P = new Pokedex();
 const Pokemon = require('../models').Pokemon;
+const EvolutionChain = require('../models').EvolutionChain;
 
 const replaceSpaces = string => {
   return string.replace(/ /g, '-');
@@ -119,6 +120,8 @@ const getPokemon = async id => {
     formattedPokemon.statSpeed = pokemon.stats.find(
       o => o.stat.name === 'speed',
     ).base_stat;
+    formattedPokemon.jsonPokemon = pokemon;
+    formattedPokemon.jsonSpecies = speciesInfo;
 
     return formattedPokemon;
   } catch (error) {
@@ -129,23 +132,46 @@ const getPokemon = async id => {
 const scrape = async () => {
   let counter = 1;
   const checkAndGet = async () => {
-    const checkIfExists = await Pokemon.findAll({
+    const checkIfExists = await Pokemon.findOne({
       where: { pokedexNumber: counter },
     });
-    if (counter < 809) {
-      if (checkIfExists.length) {
-        console.log('exists');
-        counter++;
-        console.log(counter);
-        checkAndGet();
+    if (counter < 808) {
+      if (checkIfExists.pokedexNumber) {
+        console.log(counter + ' exists');
+        const chainId = checkIfExists.jsonSpecies.evolution_chain.url.split(
+          '/',
+        )[6];
+        console.log('chaindId ' + chainId);
+        const checkIfEvolutionExists = await EvolutionChain.findOne({
+          where: { chainId: chainId },
+        });
+        if (checkIfEvolutionExists) {
+          console.log('chain evolution ' + chainId + ' exists');
+          counter++;
+          checkAndGet();
+        } else {
+          const evolutionChain = await P.getEvolutionChainById(chainId);
+          const whatever = await EvolutionChain.create({
+            chainId: evolutionChain.id,
+            json: JSON.stringify(evolutionChain),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+          console.log('created chain evolution ' + chainId);
+          setTimeout(() => {
+            counter++;
+            checkAndGet();
+          }, 1000);
+        }
+        // const checkIfEvoExists = await
       } else {
         console.log('does not exists');
         setTimeout(async () => {
           const currentPokemon = await getPokemon(counter);
-          Pokemon.create(currentPokemon);
+          const whatever = await Pokemon.create(currentPokemon);
           counter++;
-          checkAndGet();
           console.log(counter);
+          checkAndGet();
         }, 1000 + Math.floor(Math.random * 800));
       }
     } else {
@@ -153,24 +179,54 @@ const scrape = async () => {
     }
   };
   checkAndGet();
-  //   const interval = setInterval(async () => {
-  //     const checkIfExists = await Pokemon.findAll({
-  //       where: { pokedexNumber: counter },
-  //     });
-  //     console.log(checkIfExists.length);
-  //     if (checkIfExists.length) {
-  //       console.log('exists');
-  //     } else {
-  //       console.log('doesnt exist');
-  //     }
-  //     // const currentPokemon = await getPokemon(counter);
-  //     // const newPokemon = await Pokemon.create(currentPokemon);
-  //     counter++;
-  //     console.log(counter);
-  //     if (counter > 808) {
-  //       clearInterval(interval);
-  //     }
-  //   }, 2000);
 };
+
+const setChainId = async () => {
+  for (var i = 1; i < 808; i++) {
+    const pokemon = await Pokemon.findOne({
+      where: { pokedexNumber: i },
+    });
+    if (!pokemon.chainId) {
+      const chainId = pokemon.jsonSpecies.evolution_chain.url.split('/')[6];
+      pokemon.update({ chainId: chainId });
+    }
+  }
+};
+
+// const scrapeEvos = async () => {
+//   let counter = 1;
+//   const checkAndGet = async () => {
+
+//     const checkIfExists = await Pokemon.findAll({
+//       where: { chainId: counter },
+//     });
+//     if (counter < 500 && counter) {
+//       if (
+//         checkIfExists.length
+//       ) {
+//         console.log('chain ' + counter + ' exists');
+//         counter++;
+//         checkAndGet();
+//       } else {
+//         console.log('does not exists');
+//         setTimeout(async () => {
+//           const evolutionChain = await P.getEvolutionChainById(counter);
+//           EvolutionChain.create({
+//             chainId: evolutionChain.id,
+//             json: JSON.stringify(evolutionChain),
+//             createdAt: new Date(),
+//             updatedAt: new Date(),
+//           });
+//           counter++;
+//           console.log(counter);
+//           checkAndGet();
+//         }, 500);
+//       }
+//     } else {
+//       console.log('completed');
+//     }
+//   };
+//   checkAndGet();
+// };
 
 export default scrape;

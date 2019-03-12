@@ -6,85 +6,94 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       species: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       ability1: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       ability1Description: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       ability2: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       ability2Description: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       ability3: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       ability3Description: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       pokedexNumber: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       sprite: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       sprites: {
-        type: Sequelize.JSON
+        type: Sequelize.JSON,
       },
       type1: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       type2: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       pokedexEntry: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       height: {
-        type: Sequelize.DECIMAL
+        type: Sequelize.DECIMAL,
       },
-      height: {
-        type: Sequelize.DECIMAL
+      weight: {
+        type: Sequelize.DECIMAL,
       },
       statHp: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       statAttack: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       statDefense: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       statSpecialAttack: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       statSpecialDefense: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       statSpeed: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+      },
+      jsonPokemon: {
+        type: Sequelize.JSON,
+      },
+      jsonSpecies: {
+        type: Sequelize.JSON,
+      },
+      chadId: {
+        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: (queryInterface, Sequelize) => {
     return queryInterface.dropTable('Pokemons');
-  }
+  },
 };
