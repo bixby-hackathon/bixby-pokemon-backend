@@ -11,7 +11,7 @@ import pokemon from './api/pokemon';
 import db from './models';
 
 import scrape from './utils/scrape';
-scrape();
+// scrape();
 
 let app = express();
 app.server = http.createServer(app);
