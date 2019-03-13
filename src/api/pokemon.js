@@ -167,6 +167,7 @@ export default ({ config }) => {
     'statSpecialAttack',
     'statSpecialDefense',
     'statSpeed',
+    'statTotal',
   ];
 
   api.get('/raw/:id', async (req, res) => {
@@ -238,6 +239,64 @@ export default ({ config }) => {
       } else {
         res.status(200).json({ error: 'no pokemon named ' + req.params.name });
       }
+    } catch (error) {
+      throw error;
+      res.status(404).json({ message: error.message });
+    }
+  });
+
+  api.get('/stats/:stat', async (req, res) => {
+    console.log(req.params);
+    console.log(req.query);
+    let param = '';
+    let order = [];
+    if (req.params.stat) {
+      param = req.params.stat.toLowerCase();
+    }
+    if (req.query.sort) {
+      param = req.params.stat.toLowerCase();
+    }
+    switch (param) {
+      case 'total':
+        order.push('statTotal');
+        break;
+      case 'hp':
+        order.push('statHp');
+        break;
+      case 'attack':
+        order.push('statAttack');
+        break;
+      case 'defense':
+        order.push('statDefense');
+        break;
+      case 'specialattack':
+        order.push('statSpecialAttack');
+        break;
+      case 'specialdefense':
+        order.push('statSpecialDefense');
+        break;
+      case 'speed':
+        order.push('statSpeed');
+        break;
+      default:
+        stat = null;
+    }
+    if (req.query) {
+      if (req.query.sort) {
+        if (req.query.sort === 'highest') {
+          order.push('DESC');
+        }
+      }
+    }
+    console.log(order);
+
+    try {
+      const pokemon = await Pokemon.findAll({
+        order: [order],
+        limit: 10,
+        attributes: attributes,
+      });
+      res.status(200).json(pokemon);
     } catch (error) {
       throw error;
       res.status(404).json({ message: error.message });

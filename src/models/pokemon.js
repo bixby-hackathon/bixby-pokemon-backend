@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
       jsonPokemon: DataTypes.JSON,
       jsonSpecies: DataTypes.JSON,
       chainId: DataTypes.INTEGER,
+      statTotal: DataTypes.INTEGER,
     },
     {},
   );

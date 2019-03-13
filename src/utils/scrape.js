@@ -103,7 +103,7 @@ const getPokemon = async id => {
     formattedPokemon.height = pokemon.height / 10;
     formattedPokemon.weight = pokemon.weight / 10;
     formattedPokemon.statHp = pokemon.stats.find(
-      o => o.stat.name === 'attack',
+      o => o.stat.name === 'hp',
     ).base_stat;
     formattedPokemon.statAttack = pokemon.stats.find(
       o => o.stat.name === 'attack',
@@ -177,21 +177,81 @@ const scrape = async () => {
       console.log('completed');
     }
   };
-  checkAndGet();
-  // convertToJson();
+  // checkAndGet();
+  // fixHp();
+  statTotal();
 };
 
-const setChainId = async () => {
+const statTotal = async () => {
   for (var i = 1; i < 808; i++) {
     const pokemon = await Pokemon.findOne({
       where: { pokedexNumber: i },
     });
-    if (!pokemon.chainId) {
-      const chainId = pokemon.jsonSpecies.evolution_chain.url.split('/')[6];
-      pokemon.update({ chainId: chainId });
-    }
+    // const dataValues = pokemon.dataValues;
+    // console.log(dataValues.statTotal);
+    const statTotal =
+      pokemon.statHp +
+      pokemon.statAttack +
+      pokemon.statDefense +
+      pokemon.statSpecialAttack +
+      pokemon.statSpecialDefense +
+      pokemon.statSpeed;
+    console.log(statTotal);
+    pokemon.update({
+      statTotal: statTotal,
+    });
   }
 };
+
+// const fixHp = async () => {
+//   let counter = 1;
+//   const checkAndFix = async () => {
+//     if (counter < 808) {
+//       const pokemon = await Pokemon.findOne({
+//         where: { pokedexNumber: counter },
+//       });
+//       if (pokemon.statHp !== 0) {
+//         console.log('fixed');
+//         console.log(pokemon.statHp);
+//         counter++;
+//         checkAndFix();
+//       } else {
+//         setTimeout(async () => {
+//           console.log('asjdfkasjdf');
+//           console.log(pokemon.statHp);
+//           const pokemonFromApi = await P.resource('/api/v2/pokemon/' + counter);
+//           const newHp = pokemonFromApi.stats.find(o => o.stat.name === 'hp')
+//             .base_stat;
+//           pokemon.update({ statHp: newHp });
+//           counter++;
+//           checkAndFix();
+//         }, 250);
+//       }
+//     }
+//   };
+//   checkAndFix();
+// };
+
+// const breakHp = async () => {
+//   for (var i = 1; i < 808; i++) {
+//     const pokemon = await Pokemon.findOne({
+//       where: { pokedexNumber: i },
+//     });
+//     pokemon.update({ statHp: 0 });
+//   }
+// };
+
+// const setChainId = async () => {
+//   for (var i = 1; i < 808; i++) {
+//     const pokemon = await Pokemon.findOne({
+//       where: { pokedexNumber: i },
+//     });
+//     if (!pokemon.chainId) {
+//       const chainId = pokemon.jsonSpecies.evolution_chain.url.split('/')[6];
+//       pokemon.update({ chainId: chainId });
+//     }
+//   }
+// };
 
 // const convertToJson = async () => {
 //   for (var i = 255; i < 675; i++) {
