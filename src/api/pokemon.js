@@ -249,7 +249,7 @@ export default ({ config }) => {
       const userId = req.query.userId;
       const pokemon = await Pokemon.findOne({
         where: { name: req.params.name },
-        attributes: [...attributes, 'chainId', 'jsonPokemon'],
+        attributes: attributes,
       });
       if (pokemon) {
         res.status(200).json(pokemon);
@@ -267,11 +267,11 @@ export default ({ config }) => {
     try {
       const query = setQuery(req.params.id);
       const userId = req.query.userId;
+      const pokemon = await Pokemon.findOne({
+        where: { pokedexNumber: req.params.id },
+        attributes: attributes,
+      });
       if (pokemon) {
-        const pokemon = await Pokemon.findOne({
-          where: { pokedexNumber: req.params.id },
-          attributes: attributes,
-        });
         res.status(200).json(pokemon);
         Search.create({ userId, name: pokemon.name });
       } else {
