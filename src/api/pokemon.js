@@ -5,6 +5,7 @@ const P = new Pokedex();
 
 const Search = require('../models').Search;
 const Pokemon = require('../models').Pokemon;
+const EvolutionChain = require('../models').EvolutionChain;
 
 export default ({ config }) => {
   let api = Router();
@@ -159,7 +160,7 @@ export default ({ config }) => {
     'type2',
     'pokedexEntry',
     'height',
-    // 'weight',
+    'weight',
     'statHp',
     'statAttack',
     'statDefense',
@@ -181,16 +182,80 @@ export default ({ config }) => {
     }
   });
 
+  const checkProperties = obj => {
+    const tempObj = {};
+    for (var key in obj) {
+      if (obj[key] !== null && obj[key] != '') {
+        if (obj[key].name) {
+          tempObj[key] = obj[key].name;
+        } else {
+          tempObj[key] = obj[key];
+        }
+      }
+    }
+    return tempObj;
+  };
+
+  const getEvolutions = evolutionChain => {
+    let evolutions = [];
+    const searchForEvolution = chain => {
+      if (chain.evolves_to) {
+        chain.evolves_to.forEach(data => {
+          const evolution = {
+            name: chain.species.name,
+            evolvesTo: data.species.name,
+            trigger: data.evolution_details[0].trigger.name,
+          };
+          delete data.evolution_details[0].trigger;
+          evolution.value = checkProperties(data.evolution_details[0]);
+          evolutions.push(evolution);
+          if (data.evolves_to) {
+            searchForEvolution(data);
+          }
+        });
+      }
+    };
+    searchForEvolution(evolutionChain.chain);
+    // console.log(evolutions);
+    return evolutions;
+  };
+
+  api.get('/evolutions/:name', async (req, res) => {
+    try {
+      const userId = req.query.userId;
+      const pokemon = await Pokemon.findOne({
+        where: { name: req.params.name },
+        attributes: [...attributes, 'chainId', 'jsonPokemon'],
+      });
+      if (pokemon) {
+        const evolutionChain = await EvolutionChain.findOne({
+          where: { chainId: pokemon.chainId },
+        });
+        const evolutions = getEvolutions(evolutionChain.json);
+        delete pokemon.chainId;
+        res.status(200).json(evolutions);
+        Search.create({ userId, name: req.params.name });
+      } else {
+        res.status(200).json({ error: 'no pokemon named ' + req.params.name });
+      }
+    } catch (error) {
+      throw error;
+      res.status(404).json({ message: error.message });
+    }
+  });
+
   api.get('/one/:name', async (req, res) => {
     try {
       const userId = req.query.userId;
       const pokemon = await Pokemon.findOne({
         where: { name: req.params.name },
-        attributes: attributes,
+        attributes: [...attributes, 'chainId', 'jsonPokemon'],
       });
-      res.status(200).json(pokemon);
       if (pokemon) {
+        res.status(200).json(pokemon);
         Search.create({ userId, name: req.params.name });
+      } else {
+        res.status(200).json({ error: 'no pokemon named ' + req.params.name });
       }
     } catch (error) {
       throw error;
@@ -202,13 +267,15 @@ export default ({ config }) => {
     try {
       const query = setQuery(req.params.id);
       const userId = req.query.userId;
-      const pokemon = await Pokemon.findOne({
-        where: { pokedexNumber: req.params.id },
-        attributes: attributes,
-      });
-      res.status(200).json(pokemon);
       if (pokemon) {
+        const pokemon = await Pokemon.findOne({
+          where: { pokedexNumber: req.params.id },
+          attributes: attributes,
+        });
+        res.status(200).json(pokemon);
         Search.create({ userId, name: pokemon.name });
+      } else {
+        res.status(200).json({ error: 'no pokemon with id: ' + req.params.id });
       }
     } catch (error) {
       throw error;
@@ -226,7 +293,6 @@ export default ({ config }) => {
 
       // map array to promises
       const promises = await results.map(async (result, i) => {
-        console.log('result', result);
         const pokemon = await Pokemon.findOne({
           where: { name: result.name },
           attributes: attributes,

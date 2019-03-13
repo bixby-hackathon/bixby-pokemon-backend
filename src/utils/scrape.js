@@ -153,7 +153,7 @@ const scrape = async () => {
           const evolutionChain = await P.getEvolutionChainById(chainId);
           const whatever = await EvolutionChain.create({
             chainId: evolutionChain.id,
-            json: JSON.stringify(evolutionChain),
+            json: evolutionChain,
             createdAt: new Date(),
             updatedAt: new Date(),
           });
@@ -163,7 +163,6 @@ const scrape = async () => {
             checkAndGet();
           }, 1000);
         }
-        // const checkIfEvoExists = await
       } else {
         console.log('does not exists');
         setTimeout(async () => {
@@ -179,6 +178,7 @@ const scrape = async () => {
     }
   };
   checkAndGet();
+  // convertToJson();
 };
 
 const setChainId = async () => {
@@ -192,6 +192,18 @@ const setChainId = async () => {
     }
   }
 };
+
+// const convertToJson = async () => {
+//   for (var i = 255; i < 675; i++) {
+//     const evolutionChain = await EvolutionChain.findOne({
+//       where: { id: i },
+//     });
+//     if (evolutionChain) {
+//       // console.log(evolutionChain.dataValues.json);
+//       evolutionChain.update({ json: JSON.parse(evolutionChain.json) });
+//     }
+//   }
+// };
 
 // const scrapeEvos = async () => {
 //   let counter = 1;
