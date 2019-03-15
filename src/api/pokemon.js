@@ -59,93 +59,6 @@ export default ({ config }) => {
     return query;
   };
 
-  // const getPokemon = async name => {
-  //   try {
-  //     let query = setQuery(name);
-  //     let speciesInfo = {};
-  //     const pokemon = await P.getPokemonByName(query);
-  //     if (query === 'meowstic-male' || query === 'meowstic-female') {
-  //       speciesInfo = await P.getPokemonSpeciesByName('meowstic');
-  //     } else {
-  //       speciesInfo = await P.getPokemonSpeciesByName(query);
-  //     }
-  //     const formattedPokemon = {};
-  //     const abilities = pokemon.abilities;
-  //     const ability1 = abilities.find(o => o.slot === 1);
-  //     const ability2 = abilities.find(o => o.slot === 2);
-  //     const ability3 = abilities.find(o => o.slot === 3);
-  //     let ability1Resource = '';
-  //     let ability2Resource = '';
-  //     let ability3Resource = '';
-
-  //     if (ability1) {
-  //       ability1Resource = await P.resource(ability1.ability.url);
-  //       formattedPokemon.ability1Description = removeLinebreaks(
-  //         ability1Resource.effect_entries.find(o => o.language.name === 'en')
-  //           .short_effect,
-  //       );
-  //       formattedPokemon.ability1 = ability1.ability.name;
-  //     }
-  //     if (ability2) {
-  //       ability2Resource = await P.resource(ability2.ability.url);
-  //       formattedPokemon.ability2Description = removeLinebreaks(
-  //         ability2Resource.effect_entries.find(o => o.language.name === 'en')
-  //           .short_effect,
-  //       );
-  //       formattedPokemon.ability2 = ability2.ability.name;
-  //     }
-  //     if (ability3) {
-  //       ability3Resource = await P.resource(ability3.ability.url);
-  //       formattedPokemon.ability3Description = removeLinebreaks(
-  //         ability3Resource.effect_entries.find(o => o.language.name === 'en')
-  //           .short_effect,
-  //       );
-  //       formattedPokemon.ability3 = ability3.ability.name;
-  //     }
-
-  //     formattedPokemon.id = pokemon.id;
-  //     formattedPokemon.species = capitalizeFirstLetter(pokemon.name);
-  //     if (query === 'meowstic-male' || query === 'meowstic-female') {
-  //       formattedPokemon.species = 'Meowstic';
-  //     }
-  //     formattedPokemon.sprite = pokemon.sprites.front_default;
-  //     formattedPokemon.sprites = getSprites(pokemon.sprites);
-  //     if (pokemon.types.length > 1) {
-  //       formattedPokemon.type1 = pokemon.types[1].type.name;
-  //       formattedPokemon.type2 = pokemon.types[0].type.name;
-  //     } else {
-  //       formattedPokemon.type1 = pokemon.types[0].type.name;
-  //     }
-  //     formattedPokemon.pokedexEntry = removeLinebreaks(
-  //       speciesInfo.flavor_text_entries.find(o => o.language.name === 'en')
-  //         .flavor_text,
-  //     );
-  //     formattedPokemon.height = pokemon.height / 10;
-  //     formattedPokemon.weight = pokemon.weight / 10;
-  //     formattedPokemon.statHp = pokemon.stats.find(
-  //       o => o.stat.name === 'attack',
-  //     ).base_stat;
-  //     formattedPokemon.statAttack = pokemon.stats.find(
-  //       o => o.stat.name === 'attack',
-  //     ).base_stat;
-  //     formattedPokemon.statDefense = pokemon.stats.find(
-  //       o => o.stat.name === 'defense',
-  //     ).base_stat;
-  //     formattedPokemon.statSpecialAttack = pokemon.stats.find(
-  //       o => o.stat.name === 'special-attack',
-  //     ).base_stat;
-  //     formattedPokemon.statSpecialDefense = pokemon.stats.find(
-  //       o => o.stat.name === 'special-defense',
-  //     ).base_stat;
-  //     formattedPokemon.statSpeed = pokemon.stats.find(
-  //       o => o.stat.name === 'speed',
-  //     ).base_stat;
-
-  //     return formattedPokemon;
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // };
   const attributes = [
     'name',
     'species',
@@ -267,33 +180,38 @@ export default ({ config }) => {
   api.get('/stats/:stat', async (req, res) => {
     let param = '';
     let order = [];
+    let currentStat = '';
     if (req.params.stat) {
-      param = req.params.stat.toLowerCase();
-    }
-    if (req.query.sort) {
       param = req.params.stat.toLowerCase();
     }
     switch (param) {
       case 'total':
         order.push('statTotal');
+        currentStat = 'statTotal';
         break;
       case 'hp':
         order.push('statHp');
+        currentStat = 'statHp';
         break;
       case 'attack':
         order.push('statAttack');
+        currentStat = 'statAttack';
         break;
       case 'defense':
         order.push('statDefense');
+        currentStat = 'statDefense';
         break;
       case 'specialattack':
         order.push('statSpecialAttack');
+        currentStat = 'statSpecialAttack';
         break;
       case 'specialdefense':
         order.push('statSpecialDefense');
+        currentStat = 'statSpecialDefense';
         break;
       case 'speed':
         order.push('statSpeed');
+        currentStat = 'statSpeed';
         break;
       default:
         stat = null;
@@ -316,6 +234,19 @@ export default ({ config }) => {
       const pokemonRanked = pokemon.map((element, i) => {
         console.log(element.dataValues);
         element.dataValues.rank = i + 1;
+        if (req.params.stat === 'specialdefense') {
+          element.dataValues.subtitle =
+            'Special Defense: ' + element.dataValues[currentStat];
+        } else if (req.params.stat === 'specialattack') {
+          element.dataValues.subtitle =
+            'Special Attack: ' + element.dataValues[currentStat];
+        } else {
+          element.dataValues.subtitle =
+            capitalizeFirstLetter(req.params.stat) +
+            ': ' +
+            element.dataValues[currentStat];
+        }
+
         return element.dataValues;
       });
       res.status(200).json(pokemonRanked);
@@ -381,6 +312,7 @@ export default ({ config }) => {
         const pokemonData = pokemon.dataValues;
         pokemonData.count = result.count;
         pokemonData.rank = i + 1;
+        pokemonData.subtitle = result.count + ' searches';
         return pokemonData;
       });
       const promisesAll = await Promise.all(promises);
