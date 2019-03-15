@@ -265,8 +265,6 @@ export default ({ config }) => {
   });
 
   api.get('/stats/:stat', async (req, res) => {
-    console.log(req.params);
-    console.log(req.query);
     let param = '';
     let order = [];
     if (req.params.stat) {
@@ -315,7 +313,12 @@ export default ({ config }) => {
         limit: 10,
         attributes: attributes,
       });
-      res.status(200).json(pokemon);
+      const pokemonRanked = pokemon.map((element, i) => {
+        console.log(element.dataValues);
+        element.dataValues.rank = i + 1;
+        return element.dataValues;
+      });
+      res.status(200).json(pokemonRanked);
     } catch (error) {
       throw error;
       res.status(404).json({ message: error.message });

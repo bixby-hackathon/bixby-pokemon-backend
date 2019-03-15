@@ -20,7 +20,7 @@ const defensiveTypes = [
 ];
 
 // these rows are defensive rows
-const names  =   ['no','fi','fl','po','gr','ro','bu','gh','st','fi','wa','gr','el','ps','ic','dr','da','fa']; // prettier-ignore
+const abbrev =   ['no','fi','fl','po','gr','ro','bu','gh','st','fi','wa','gr','el','ps','ic','dr','da','fa']; // prettier-ignore
 const normal =   [   1,   2,   1,   1,   1,   1,   1,   0,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1]; // prettier-ignore
 const fighting = [   1,   1,   2,   1,   1,   0,   2,  .5,   1,   1,   1,   1,  .5,   1,   2,   1,   1,   1]; // prettier-ignore
 const flying =   [   1,  .5,   1,   1,   0,   2,  .5,   1,   1,   1,   1,  .5,   2,   1,   2,   1,   1,   1]; // prettier-ignore
