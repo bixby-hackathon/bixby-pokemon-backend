@@ -3,6 +3,7 @@ import Pokedex from 'pokedex-promise-v2';
 import { sequelize } from '../models';
 import generateEvolutionText from '../utils/generateEvolutionText';
 const P = new Pokedex();
+import { defensiveTypeChart } from '../utils/typeCharts';
 
 const Search = require('../models').Search;
 const Pokemon = require('../models').Pokemon;
@@ -413,6 +414,18 @@ export default ({ config }) => {
     } catch (error) {
       res.status(404).json({ message: error.message });
     }
+  });
+
+  api.get('/types/:name', async (req, res) => {
+    const pokemon = await Pokemon.findOne({ where: { name: req.params.name } });
+    const types = [];
+    types.push(pokemon.type1);
+    if (pokemon.type2) {
+      types.push(pokemon.type2);
+    }
+    console.log(types);
+    defensiveTypeChart(types);
+    res.status(200).json(defensiveTypeChart(types));
   });
 
   return api;
