@@ -179,7 +179,8 @@ const scrape = async () => {
   };
   // checkAndGet();
   // fixHp();
-  statTotal();
+  // statTotal();
+  setEvolutionLine();
 };
 
 const statTotal = async () => {

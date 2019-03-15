@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import Pokedex from 'pokedex-promise-v2';
 import { sequelize } from '../models';
+import generateEvolutionText from '../utils/generateEvolutionText';
 const P = new Pokedex();
 
 const Search = require('../models').Search;
@@ -209,6 +210,8 @@ export default ({ config }) => {
           };
           delete data.evolution_details[0].trigger;
           evolution.value = checkProperties(data.evolution_details[0]);
+          evolution.text = generateEvolutionText(evolution);
+          delete evolution.value;
           evolutions.push(evolution);
           if (data.evolves_to) {
             searchForEvolution(data);
@@ -217,7 +220,6 @@ export default ({ config }) => {
       }
     };
     searchForEvolution(evolutionChain.chain);
-    // console.log(evolutions);
     return evolutions;
   };
 
@@ -233,8 +235,24 @@ export default ({ config }) => {
           where: { chainId: pokemon.chainId },
         });
         const evolutions = getEvolutions(evolutionChain.json);
-        delete pokemon.chainId;
-        res.status(200).json(evolutions);
+        // delete pokemon.chainId;
+
+        const promises = await evolutions.map(async (result, i) => {
+          const namePokemon = await Pokemon.findOne({
+            where: { name: result.name },
+            attributes: ['sprite'],
+          });
+          const evolvesToPokemon = await Pokemon.findOne({
+            where: { name: result.evolvesTo },
+            attributes: ['sprite'],
+          });
+          result.nameSprite = namePokemon.sprite;
+          result.evolvesToSprite = evolvesToPokemon.sprite;
+          return result;
+        });
+        const promisesAll = await Promise.all(promises);
+
+        res.status(200).json(promisesAll);
         Search.create({ userId, name: req.params.name });
       } else {
         res.status(200).json({ error: 'no pokemon named ' + req.params.name });
