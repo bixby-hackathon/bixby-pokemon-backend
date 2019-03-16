@@ -4,6 +4,8 @@ import { sequelize } from '../models';
 import generateEvolutionText from '../utils/generateEvolutionText';
 const P = new Pokedex();
 import { defensiveTypeChart } from '../utils/typeCharts';
+import allPokemon from '../utils/allPokemon';
+import levenshtein from '../utils/levenshtein';
 
 const Search = require('../models').Search;
 const Pokemon = require('../models').Pokemon;
@@ -257,10 +259,26 @@ export default ({ config }) => {
   });
 
   api.get('/one/:name', async (req, res) => {
+    let name = req.params.name;
+    const levenshteinArray = [];
+    // convert to recursion later to cut off early if it's 0
+    // allPokemon.forEach(arrayName => {
+    //   levenshteinArray.push(levenshtein(name, arrayName));
+    // });
+
+    for (var i = 0; i < allPokemon.length; i++) {
+      if (levenshtein(allPokemon[i], name) === 0) {
+        levenshteinArray.push(0);
+        break;
+      }
+      levenshteinArray.push(levenshtein(allPokemon[i], name));
+    }
+
+    name = allPokemon[levenshteinArray.indexOf(Math.min(...levenshteinArray))];
     try {
       const userId = req.query.userId;
       const pokemon = await Pokemon.findOne({
-        where: { name: req.params.name },
+        where: { name: name },
         attributes: attributes,
       });
       if (pokemon) {
