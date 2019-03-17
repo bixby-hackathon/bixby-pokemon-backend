@@ -359,10 +359,140 @@ export default ({ config }) => {
         offset: offset,
       };
 
-      // res.status(200).json(promisesAll);
-      res.status(200).json(responseObj);
+      res.status(200).json(promisesAll);
+      // res.status(200).json(responseObj);
     } catch (error) {
       res.status(404).json({ message: error.message });
+    }
+  });
+
+  api.get('/rank/:sortBy', async (req, res) => {
+    let offset = req.query.offset;
+    if (offset) {
+      offset = parseInt(offset);
+    }
+    if (req.params.sortBy === 'popularity') {
+      try {
+        let psqlQuery =
+          'SELECT name, COUNT(*) FROM "Searches" GROUP BY name ORDER BY count';
+        if (req.query) {
+          if (req.query.sort !== 'lowest') {
+            psqlQuery += ' DESC';
+          }
+        }
+        if (typeof offset === 'number') {
+          psqlQuery += ' OFFSET ' + offset;
+        } else {
+          offset = 0;
+        }
+        psqlQuery += ' LIMIT 10';
+        const results = await sequelize.query(psqlQuery, {
+          type: sequelize.QueryTypes.SELECT,
+          offset: offset,
+        });
+
+        // map array to promises
+        const promises = await results.map(async (result, i) => {
+          const pokemon = await Pokemon.findOne({
+            where: { name: result.name },
+            attributes: attributes,
+          });
+          const pokemonData = pokemon.dataValues;
+          pokemonData.count = result.count;
+          pokemonData.rank = i + 1 + offset;
+          pokemonData.subtitle = result.count + ' searches';
+          return pokemonData;
+        });
+        const promisesAll = await Promise.all(promises);
+        const responseObj = {
+          pokemon: promisesAll,
+          offset: offset,
+        };
+
+        // res.status(200).json(promisesAll);
+        res.status(200).json(responseObj);
+      } catch (error) {
+        res.status(404).json({ message: error.message });
+      }
+    } else {
+      let param = '';
+      let order = [];
+      let currentStat = '';
+      if (req.params.sortBy) {
+        param = req.params.sortBy.toLowerCase();
+      }
+      switch (param) {
+        case 'total':
+          order.push('statTotal');
+          currentStat = 'statTotal';
+          break;
+        case 'hp':
+          order.push('statHp');
+          currentStat = 'statHp';
+          break;
+        case 'attack':
+          order.push('statAttack');
+          currentStat = 'statAttack';
+          break;
+        case 'defense':
+          order.push('statDefense');
+          currentStat = 'statDefense';
+          break;
+        case 'specialattack':
+          order.push('statSpecialAttack');
+          currentStat = 'statSpecialAttack';
+          break;
+        case 'specialdefense':
+          order.push('statSpecialDefense');
+          currentStat = 'statSpecialDefense';
+          break;
+        case 'speed':
+          order.push('statSpeed');
+          currentStat = 'statSpeed';
+          break;
+        default:
+          stat = null;
+      }
+      if (req.query) {
+        if (req.query.sort) {
+          if (req.query.sort === 'highest') {
+            order.push('DESC');
+          }
+        }
+      }
+
+      try {
+        const pokemon = await Pokemon.findAll({
+          order: [order],
+          limit: 10,
+          offset: offset,
+          attributes: attributes,
+        });
+        const pokemonRanked = pokemon.map((element, i) => {
+          console.log(element.dataValues);
+          element.dataValues.rank = i + 1 + offset;
+          if (req.params.sortBy === 'specialdefense') {
+            element.dataValues.subtitle =
+              'Special Defense: ' + element.dataValues[currentStat];
+          } else if (req.params.sortBy === 'specialattack') {
+            element.dataValues.subtitle =
+              'Special Attack: ' + element.dataValues[currentStat];
+          } else {
+            element.dataValues.subtitle =
+              capitalizeFirstLetter(req.params.sortBy) +
+              ': ' +
+              element.dataValues[currentStat];
+          }
+
+          return element.dataValues;
+        });
+        const responseObj = { pokemon: pokemonRanked, offset: offset };
+
+        res.status(200).json(pokemonRanked);
+      } catch (error) {
+        throw error;
+        res.status(404).json({ message: error.message });
+      }
     }
   });
 
