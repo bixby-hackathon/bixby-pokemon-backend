@@ -488,9 +488,13 @@ export default ({ config }) => {
         });
         const responseObj = {
           pokemon: pokemonRanked,
-          offset: offset,
-          sortBy: currentStat,
+          sortBy: param,
         };
+        if (offset) {
+          responseObj.offset = offset;
+        } else {
+          responseObj.offset = 0;
+        }
 
         res.status(200).json(responseObj);
       } catch (error) {
