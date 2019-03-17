@@ -184,6 +184,9 @@ export default ({ config }) => {
     if (offset) {
       offset = parseInt(offset);
     }
+    if (typeof offset !== 'number') {
+      offset = 0;
+    }
     let param = '';
     let order = [];
     let currentStat = '';
@@ -229,7 +232,6 @@ export default ({ config }) => {
         }
       }
     }
-    console.log(order);
 
     try {
       const pokemon = await Pokemon.findAll({
@@ -240,7 +242,7 @@ export default ({ config }) => {
       });
       const pokemonRanked = pokemon.map((element, i) => {
         console.log(element.dataValues);
-        element.dataValues.rank = i + 1;
+        element.dataValues.rank = i + 1 + offset;
         if (req.params.stat === 'specialdefense') {
           element.dataValues.subtitle =
             'Special Defense: ' + element.dataValues[currentStat];
@@ -256,6 +258,8 @@ export default ({ config }) => {
 
         return element.dataValues;
       });
+      const responseObj = { pokemon: pokemonRanked, offset: offset };
+
       res.status(200).json(pokemonRanked);
     } catch (error) {
       throw error;
@@ -345,7 +349,7 @@ export default ({ config }) => {
         });
         const pokemonData = pokemon.dataValues;
         pokemonData.count = result.count;
-        pokemonData.rank = i + 1;
+        pokemonData.rank = i + 1 + offset;
         pokemonData.subtitle = result.count + ' searches';
         return pokemonData;
       });
