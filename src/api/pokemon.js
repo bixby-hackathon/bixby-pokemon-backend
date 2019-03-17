@@ -407,6 +407,7 @@ export default ({ config }) => {
         const responseObj = {
           pokemon: promisesAll,
           offset: offset,
+          sortBy: 'popularity',
         };
 
         // res.status(200).json(promisesAll);
@@ -469,7 +470,6 @@ export default ({ config }) => {
           attributes: attributes,
         });
         const pokemonRanked = pokemon.map((element, i) => {
-          console.log(element.dataValues);
           element.dataValues.rank = i + 1 + offset;
           if (req.params.sortBy === 'specialdefense') {
             element.dataValues.subtitle =
@@ -486,9 +486,13 @@ export default ({ config }) => {
 
           return element.dataValues;
         });
-        const responseObj = { pokemon: pokemonRanked, offset: offset };
+        const responseObj = {
+          pokemon: pokemonRanked,
+          offset: offset,
+          sortBy: currentStat,
+        };
 
-        res.status(200).json(pokemonRanked);
+        res.status(200).json(responseObj);
       } catch (error) {
         throw error;
         res.status(404).json({ message: error.message });
