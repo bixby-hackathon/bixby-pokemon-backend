@@ -180,8 +180,19 @@ const scrape = async () => {
   // checkAndGet();
   // fixHp();
   // statTotal();
-  setEvolutionLine();
+  // setEvolutionLine();
+  // randomPopularityCount();
 };
+
+// const randomPopularityCount = async () => {
+//   for (var i = 1; i < 810; i++) {
+//     const pokemon = await Pokemon.findOne({
+//       where: { pokedexNumber: i },
+//     });
+//     const rand = Math.floor(Math.random() * 30);
+//     pokemon.update({ count: rand });
+//   }
+// };
 
 const statTotal = async () => {
   for (var i = 1; i < 808; i++) {

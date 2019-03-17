@@ -62,6 +62,7 @@ export default ({ config }) => {
   };
 
   const attributes = [
+    'id',
     'name',
     'species',
     'pokedexNumber',
@@ -85,6 +86,7 @@ export default ({ config }) => {
     'statSpecialDefense',
     'statSpeed',
     'statTotal',
+    'count',
   ];
 
   api.get('/raw/:id', async (req, res) => {
@@ -293,7 +295,11 @@ export default ({ config }) => {
       });
       if (pokemon) {
         res.status(200).json(pokemon);
-        Search.create({ userId, name: req.params.name });
+        console.log(pokemon.dataValues);
+        let count = pokemon.dataValues.count;
+        console.log(count + 1);
+        let updated = await pokemon.update({ count: count + 1 });
+        console.log(updated);
       } else {
         res.status(200).json({ error: 'no pokemon named ' + req.params.name });
       }
@@ -371,139 +377,106 @@ export default ({ config }) => {
     if (offset) {
       offset = parseInt(offset);
     }
+    if (typeof offset !== 'number') {
+      offset = 0;
+    }
     let sortResponse = req.query.sort;
-    if (req.params.sortBy === 'popularity') {
-      try {
-        let psqlQuery =
-          'SELECT name, COUNT(*) FROM "Searches" GROUP BY name ORDER BY count';
-        if (req.query) {
-          if (req.query.sort !== 'lowest') {
-            psqlQuery += ' DESC';
-          }
-        }
-        if (typeof offset === 'number') {
-          psqlQuery += ' OFFSET ' + offset;
-        } else {
-          offset = 0;
-        }
-        psqlQuery += ' LIMIT 10';
-        const results = await sequelize.query(psqlQuery, {
-          type: sequelize.QueryTypes.SELECT,
-          offset: offset,
-        });
-
-        // map array to promises
-        const promises = await results.map(async (result, i) => {
-          const pokemon = await Pokemon.findOne({
-            where: { name: result.name },
-            attributes: attributes,
-          });
-          const pokemonData = pokemon.dataValues;
-          pokemonData.count = result.count;
-          pokemonData.rank = i + 1 + offset;
-          pokemonData.subtitle = result.count + ' searches';
-          return pokemonData;
-        });
-        const promisesAll = await Promise.all(promises);
-        const responseObj = {
-          pokemon: promisesAll,
-          offset: offset,
-          sortBy: 'popularity',
-          sort: sortResponse,
-        };
-
-        // res.status(200).json(promisesAll);
-        res.status(200).json(responseObj);
-      } catch (error) {
-        res.status(404).json({ message: error.message });
-      }
-    } else {
-      let param = '';
-      let order = [];
-      let currentStat = '';
-      if (req.params.sortBy) {
-        param = req.params.sortBy.toLowerCase();
-      }
-      switch (param) {
-        case 'total':
-          order.push('statTotal');
-          currentStat = 'statTotal';
-          break;
-        case 'hp':
-          order.push('statHp');
-          currentStat = 'statHp';
-          break;
-        case 'attack':
-          order.push('statAttack');
-          currentStat = 'statAttack';
-          break;
-        case 'defense':
-          order.push('statDefense');
-          currentStat = 'statDefense';
-          break;
-        case 'specialattack':
-          order.push('statSpecialAttack');
-          currentStat = 'statSpecialAttack';
-          break;
-        case 'specialdefense':
-          order.push('statSpecialDefense');
-          currentStat = 'statSpecialDefense';
-          break;
-        case 'speed':
-          order.push('statSpeed');
-          currentStat = 'statSpeed';
-          break;
-        default:
-          stat = null;
-      }
-      if (req.query) {
-        if (req.query.sort) {
-          if (req.query.sort === 'highest') {
-            order.push('DESC');
-          }
+    let param = '';
+    let order = [];
+    let currentStat = '';
+    if (req.params.sortBy) {
+      param = req.params.sortBy.toLowerCase();
+    }
+    switch (param) {
+      case 'total':
+        order.push('statTotal');
+        currentStat = 'statTotal';
+        break;
+      case 'hp':
+        order.push('statHp');
+        currentStat = 'statHp';
+        break;
+      case 'attack':
+        order.push('statAttack');
+        currentStat = 'statAttack';
+        break;
+      case 'defense':
+        order.push('statDefense');
+        currentStat = 'statDefense';
+        break;
+      case 'specialattack':
+        order.push('statSpecialAttack');
+        currentStat = 'statSpecialAttack';
+        break;
+      case 'specialdefense':
+        order.push('statSpecialDefense');
+        currentStat = 'statSpecialDefense';
+        break;
+      case 'speed':
+        order.push('statSpeed');
+        currentStat = 'statSpeed';
+        break;
+      case 'popularity':
+        order.push('count');
+        currentStat = 'count';
+        break;
+      default:
+        stat = null;
+    }
+    if (req.query) {
+      if (req.query.sort) {
+        if (req.query.sort === 'highest') {
+          order.push('DESC');
         }
       }
+    }
 
-      try {
-        const pokemon = await Pokemon.findAll({
-          order: [order],
-          limit: 10,
-          offset: offset,
-          attributes: attributes,
-        });
-        const pokemonRanked = pokemon.map((element, i) => {
-          element.dataValues.rank = i + 1 + offset;
-          if (req.params.sortBy === 'specialdefense') {
-            element.dataValues.subtitle =
-              'Special Defense: ' + element.dataValues[currentStat];
-          } else if (req.params.sortBy === 'specialattack') {
-            element.dataValues.subtitle =
-              'Special Attack: ' + element.dataValues[currentStat];
+    try {
+      const pokemon = await Pokemon.findAll({
+        order: [order],
+        limit: 10,
+        offset: offset,
+        attributes: attributes,
+      });
+      const pokemonRanked = pokemon.map((element, i) => {
+        element.dataValues.rank = i + 1 + offset;
+        if (req.params.sortBy === 'specialdefense') {
+          element.dataValues.subtitle =
+            'Special Defense: ' + element.dataValues[currentStat];
+        } else if (req.params.sortBy === 'specialattack') {
+          element.dataValues.subtitle =
+            'Special Attack: ' + element.dataValues[currentStat];
+        } else if (req.params.sortBy === 'popularity') {
+          if (req.query.sort === 'lowest') {
+            let tempRank = 802 - offset - i;
+            element.dataValues.subtitle = 'Rank: ' + tempRank;
           } else {
-            element.dataValues.subtitle =
-              capitalizeFirstLetter(req.params.sortBy) +
-              ': ' +
-              element.dataValues[currentStat];
+            element.dataValues.subtitle = 'Rank: ' + element.dataValues.rank;
           }
-
-          return element.dataValues;
-        });
-        const responseObj = {
-          pokemon: pokemonRanked,
-          sortBy: param,
-          sort: sortResponse,
-        };
-        if (offset) {
-          responseObj.offset = offset;
         } else {
-          responseObj.offset = 0;
+          element.dataValues.subtitle =
+            capitalizeFirstLetter(req.params.sortBy) +
+            ': ' +
+            element.dataValues[currentStat];
         }
 
-        res.status(200).json(responseObj);
-      } catch (error) {
-        throw error;
-        res.status(404).json({ message: error.message });
+        return element.dataValues;
+      });
+      const responseObj = {
+        pokemon: pokemonRanked,
+        sortBy: param,
+        sort: sortResponse,
+      };
+      if (offset) {
+        responseObj.offset = offset;
+      } else {
+        responseObj.offset = 0;
       }
+
+      res.status(200).json(responseObj);
+    } catch (error) {
+      throw error;
+      res.status(404).json({ message: error.message });
     }
   });
 

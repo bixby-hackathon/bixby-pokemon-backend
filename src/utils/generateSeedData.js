@@ -801,13 +801,6 @@ var allPokemon = [
   'Necrozma',
   'Magearna',
   'Marshadow',
-  'Poipole',
-  'Naganadel',
-  'Stakataka',
-  'Blacephalon',
-  'Zeraora',
-  'Meltan',
-  'Melmetal',
 ];
 
 function generateSeedData(count, Sequelize) {

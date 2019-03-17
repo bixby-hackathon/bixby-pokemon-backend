@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       jsonSpecies: DataTypes.JSON,
       chainId: DataTypes.INTEGER,
       statTotal: DataTypes.INTEGER,
+      count: DataTypes.INTEGER,
     },
     {},
   );
