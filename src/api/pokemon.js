@@ -180,6 +180,10 @@ export default ({ config }) => {
   });
 
   api.get('/stats/:stat', async (req, res) => {
+    let offset = req.query.offset;
+    if (offset) {
+      offset = parseInt(offset);
+    }
     let param = '';
     let order = [];
     let currentStat = '';
@@ -231,6 +235,7 @@ export default ({ config }) => {
       const pokemon = await Pokemon.findAll({
         order: [order],
         limit: 10,
+        offset: offset,
         attributes: attributes,
       });
       const pokemonRanked = pokemon.map((element, i) => {
@@ -269,6 +274,7 @@ export default ({ config }) => {
     for (var i = 0; i < allPokemon.length; i++) {
       if (levenshtein(allPokemon[i], name) === 0) {
         levenshteinArray.push(0);
+        console.log('break');
         break;
       }
       levenshteinArray.push(levenshtein(allPokemon[i], name));
@@ -314,11 +320,21 @@ export default ({ config }) => {
   });
 
   api.get('/popular', async (req, res) => {
+    let offset = req.query.offset;
+    if (offset) {
+      offset = parseInt(offset);
+    }
     try {
-      const psqlQuery =
+      let psqlQuery =
         'SELECT name, COUNT(*) FROM "Searches" GROUP BY name ORDER BY count DESC LIMIT 10';
+      if (typeof offset === 'number') {
+        psqlQuery += 'OFFSET ' + offset;
+      } else {
+        offset = 0;
+      }
       const results = await sequelize.query(psqlQuery, {
         type: sequelize.QueryTypes.SELECT,
+        offset: offset,
       });
 
       // map array to promises
@@ -334,8 +350,13 @@ export default ({ config }) => {
         return pokemonData;
       });
       const promisesAll = await Promise.all(promises);
+      const responseObj = {
+        pokemon: promisesAll,
+        offset: offset,
+      };
 
-      res.status(200).json(promisesAll);
+      // res.status(200).json(promisesAll);
+      res.status(200).json(responseObj);
     } catch (error) {
       res.status(404).json({ message: error.message });
     }
