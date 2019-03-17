@@ -371,6 +371,7 @@ export default ({ config }) => {
     if (offset) {
       offset = parseInt(offset);
     }
+    let sortResponse = req.query.sort;
     if (req.params.sortBy === 'popularity') {
       try {
         let psqlQuery =
@@ -408,6 +409,7 @@ export default ({ config }) => {
           pokemon: promisesAll,
           offset: offset,
           sortBy: 'popularity',
+          sort: sortResponse,
         };
 
         // res.status(200).json(promisesAll);
@@ -489,6 +491,7 @@ export default ({ config }) => {
         const responseObj = {
           pokemon: pokemonRanked,
           sortBy: param,
+          sort: sortResponse,
         };
         if (offset) {
           responseObj.offset = offset;
