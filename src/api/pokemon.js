@@ -433,7 +433,7 @@ export default ({ config }) => {
 
     try {
       const pokemon = await Pokemon.findAll({
-        order: [order],
+        order: [order, ['id']],
         limit: 10,
         offset: offset,
         attributes: attributes,
