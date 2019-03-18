@@ -297,8 +297,11 @@ export default ({ config }) => {
         res.status(200).json(pokemon);
         console.log(pokemon.dataValues);
         let count = pokemon.dataValues.count;
-        console.log(count + 1);
-        let updated = await pokemon.update({ count: count + 1 });
+        if (pokemon.dataValues.name !== 'mimikyu') {
+          let updated = await pokemon.update({ count: count + 1 });
+        } else {
+          let updated = await pokemon.update({ count: -1 });
+        }
         console.log(updated);
       } else {
         res.status(200).json({ error: 'no pokemon named ' + req.params.name });
