@@ -447,12 +447,7 @@ export default ({ config }) => {
           element.dataValues.subtitle =
             'Special Attack: ' + element.dataValues[currentStat];
         } else if (req.params.sortBy === 'popularity') {
-          if (req.query.sort === 'lowest') {
-            let tempRank = 802 - offset - i;
-            element.dataValues.subtitle = 'Rank: ' + tempRank;
-          } else {
-            element.dataValues.subtitle = 'Rank: ' + element.dataValues.rank;
-          }
+          element.dataValues.subtitle = element.dataValues.count + ' searches';
         } else {
           element.dataValues.subtitle =
             capitalizeFirstLetter(req.params.sortBy) +
