@@ -290,7 +290,7 @@ export default ({ config }) => {
         attributes: attributes,
       });
       if (pokemon) {
-        pokemon.dataValues.searchedFor = req.params.name;
+        pokemon.dataValues.searchedFor = req.params.name.replace(/-/g, ' ');
         res.status(200).json(pokemon.dataValues);
         console.log(pokemon.dataValues);
         let count = pokemon.dataValues.count;
