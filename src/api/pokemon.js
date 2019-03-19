@@ -514,8 +514,9 @@ export default ({ config }) => {
       types.push(pokemon.type2);
     }
     console.log(types);
-    defensiveTypeChart(types);
-    res.status(200).json(defensiveTypeChart(types));
+    const chart = defensiveTypeChart(types);
+    chart.name = req.params.name;
+    res.status(200).json(chart);
   });
 
   return api;
