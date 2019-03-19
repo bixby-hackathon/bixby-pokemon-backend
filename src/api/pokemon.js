@@ -14,6 +14,12 @@ const EvolutionChain = require('../models').EvolutionChain;
 export default ({ config }) => {
   let api = Router();
 
+  function toTitleCase(str) {
+    return str.replace(/\w\S*/g, function(txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+  }
+
   const replaceSpaces = string => {
     return string.replace(/ /g, '-');
   };
@@ -290,7 +296,9 @@ export default ({ config }) => {
         attributes: attributes,
       });
       if (pokemon) {
-        pokemon.dataValues.searchedFor = req.params.name.replace(/-/g, ' ');
+        pokemon.dataValues.searchedFor = toTitleCase(
+          req.params.name.replace(/-/g, ' '),
+        );
         res.status(200).json(pokemon.dataValues);
         console.log(pokemon.dataValues);
         let count = pokemon.dataValues.count;
