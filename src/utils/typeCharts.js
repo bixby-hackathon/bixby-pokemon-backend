@@ -70,6 +70,13 @@ const defensiveTypeChart = types => {
       tempObj.multiplier = num * chart2[i];
       return tempObj;
     });
+  } else {
+    chart = chart.map((num, i) => {
+      const tempObj = {};
+      tempObj.type = defensiveTypes[i];
+      tempObj.multiplier = num;
+      return tempObj;
+    });
   }
 
   const bixbyChart = {
