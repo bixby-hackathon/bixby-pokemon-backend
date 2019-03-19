@@ -395,6 +395,14 @@ export default ({ config }) => {
       param = req.params.sortBy.toLowerCase();
     }
     switch (param) {
+      case 'height':
+        order.push('height');
+        currentStat = 'height';
+        break;
+      case 'weight':
+        order.push('weight');
+        currentStat = 'weight';
+        break;
       case 'total':
         order.push('statTotal');
         currentStat = 'statTotal';
@@ -455,6 +463,18 @@ export default ({ config }) => {
             'Special Attack: ' + element.dataValues[currentStat];
         } else if (req.params.sortBy === 'popularity') {
           element.dataValues.subtitle = element.dataValues.count + ' searches';
+        } else if (req.params.sortBy === 'height') {
+          element.dataValues.subtitle =
+            capitalizeFirstLetter(req.params.sortBy) +
+            ': ' +
+            element.dataValues[currentStat] +
+            'm';
+        } else if (req.params.sortBy === 'weight') {
+          element.dataValues.subtitle =
+            capitalizeFirstLetter(req.params.sortBy) +
+            ': ' +
+            element.dataValues[currentStat] +
+            'kg';
         } else {
           element.dataValues.subtitle =
             capitalizeFirstLetter(req.params.sortBy) +

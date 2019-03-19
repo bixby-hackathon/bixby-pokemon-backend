@@ -1,23 +1,34 @@
 # Bixby Pokemon Backend
 
 Built this to format the data for easier consumption in Bixby.
-This server also caches the responses from https://pokeapi.co/api/v2/ for obvious courtesy reasons.
 
-This is deployed at the following free herokuapp (along with a sample API endpoint):
-https://bixby-pokemon-demo.herokuapp.com/pokemon/pikachu
+Current BixbyDéx commands:
 
-```javascript
-{
-  "id": 25,
-  "sprite": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
-  "pokedexEntry": "Its nature is to store up electricity. Forests\nwhere nests of Pikachu live are dangerous,\nsince the trees are so often struck by lightning.",
-  "height": 4,
-  "weight": 60,
-  "statHp": 55,
-  "statAttack": 55,
-  "statDefense": 40,
-  "statSpecialAttack": 50,
-  "statSpecialDefense": 50,
-  "statSpeed": 90
-}
-```
+- Search for one Pokemon
+  - "Pikachu"
+  - "Char lizard"
+  - "Bulb a sore"
+  - "Show me a Jigglypuff"
+  - "Show me a Gyro dos"
+  - "Show me a Tent a cool"
+- Show a random Pokemon
+  - "Random Pokemon"
+  - "Show me a random Pokemon"
+- Show Pokemon ranked based on:
+  - "Show me the Pokemon with the (highest/lowest) (popularity/hit points/attack/defense/special attack/special defense/speed)
+  - "Show me the strongest Pokemon"
+  - "Show me the weakest Pokemon"
+  - "Slowest Pokemon"
+  - "Fastest Pokemon"
+- Show Evolutions -> Continuation of a Pokemon
+  - "Evolutions"
+- Show Type Chart -> Continuation of a Pokemon
+  - "Type Chart"
+    - Need to consider making these continuations in one step, like show evolutions of Pikachu
+- Show tutorial
+  - "BixbyDéx"
+  - "Bixby decks"
+- Which Pokemon does someone resemble?
+  - "Which Pokemon is Geoffrey?"
+  - "Which Pokemon is Jonathan Pan?"
+  - "Which Pokemon is Neil Patrick Harris?"
