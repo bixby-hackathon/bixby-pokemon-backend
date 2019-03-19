@@ -73,38 +73,61 @@ const defensiveTypeChart = types => {
   }
 
   const bixbyChart = {
-    noDamage: [],
-    halfDamage: [],
-    normalDamage: [],
-    doubleDamage: [],
-    quadrupleDamage: [],
-    raw: chart,
+    // noDamage: [],
+    // halfDamage: [],
+    // normalDamage: [],
+    // doubleDamage: [],
+    // quadrupleDamage: [],
+    // raw: chart,
+    resistances: [],
+    neutral: [],
+    weaknesses: [],
   };
+
   chart.forEach(o => {
-    if (o.multiplier === 0) {
-      bixbyChart.noDamage.push(o.type);
+    if (o.multiplier === 0 || o.multiplier === 0.25 || o.multiplier === 0.5) {
+      bixbyChart.resistances.push(o);
     }
-  });
-  chart.forEach(o => {
-    if (o.multiplier === 0.5) {
-      bixbyChart.halfDamage.push(o.type);
-    }
-  });
-  chart.forEach(o => {
     if (o.multiplier === 1) {
-      bixbyChart.normalDamage.push(o.type);
+      bixbyChart.neutral.push(o);
+    }
+    if (o.multiplier === 2 || o.multiplier === 4) {
+      bixbyChart.weaknesses.push(o);
     }
   });
-  chart.forEach(o => {
-    if (o.multiplier === 2) {
-      bixbyChart.doubleDamage.push(o.type);
-    }
+
+  bixbyChart.resistances.sort((a, b) => {
+    return a.multiplier - b.multiplier;
   });
-  chart.forEach(o => {
-    if (o.multiplier === 4) {
-      bixbyChart.quadrupleDamage.push(o.type);
-    }
+  bixbyChart.weaknesses.sort((a, b) => {
+    return a.multiplier - b.multiplier;
   });
+
+  // chart.forEach(o => {
+  //   if (o.multiplier === 0) {
+  //     bixbyChart.noDamage.push(o.type);
+  //   }
+  // });
+  // chart.forEach(o => {
+  //   if (o.multiplier === 0.5) {
+  //     bixbyChart.halfDamage.push(o.type);
+  //   }
+  // });
+  // chart.forEach(o => {
+  //   if (o.multiplier === 1) {
+  //     bixbyChart.normalDamage.push(o.type);
+  //   }
+  // });
+  // chart.forEach(o => {
+  //   if (o.multiplier === 2) {
+  //     bixbyChart.doubleDamage.push(o.type);
+  //   }
+  // });
+  // chart.forEach(o => {
+  //   if (o.multiplier === 4) {
+  //     bixbyChart.quadrupleDamage.push(o.type);
+  //   }
+  // });
   // bixbyChart.noDamage = chart.find(o => o.multiplier === 0).type;
   // bixbyChart.halfDamage = chart.find(o => o.multiplier === 0.5).type;
   // bixbyChart.normalDamage = chart.find(o => o.multiplier === 1).type;
