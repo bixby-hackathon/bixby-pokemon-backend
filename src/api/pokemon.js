@@ -272,10 +272,6 @@ export default ({ config }) => {
   api.get('/one/:name', async (req, res) => {
     let name = req.params.name;
     const levenshteinArray = [];
-    // convert to recursion later to cut off early if it's 0
-    // allPokemon.forEach(arrayName => {
-    //   levenshteinArray.push(levenshtein(name, arrayName));
-    // });
 
     for (var i = 0; i < allPokemon.length; i++) {
       if (levenshtein(allPokemon[i], name) === 0) {
@@ -294,7 +290,8 @@ export default ({ config }) => {
         attributes: attributes,
       });
       if (pokemon) {
-        res.status(200).json(pokemon);
+        pokemon.dataValues.searchedFor = req.params.name;
+        res.status(200).json(pokemon.dataValues);
         console.log(pokemon.dataValues);
         let count = pokemon.dataValues.count;
         if (pokemon.dataValues.name !== 'mimikyu') {
@@ -302,7 +299,6 @@ export default ({ config }) => {
         } else {
           let updated = await pokemon.update({ count: -1 });
         }
-        console.log(updated);
       } else {
         res.status(200).json({ error: 'no pokemon named ' + req.params.name });
       }
