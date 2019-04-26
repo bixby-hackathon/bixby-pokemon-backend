@@ -184,36 +184,36 @@ const scrape = async () => {
   // randomPopularityCount();
 };
 
-// const randomPopularityCount = async () => {
-//   for (var i = 1; i < 810; i++) {
-//     const pokemon = await Pokemon.findOne({
-//       where: { pokedexNumber: i },
-//     });
-//     const rand = Math.floor(Math.random() * 30);
-//     pokemon.update({ count: rand });
-//   }
-// };
-
-const statTotal = async () => {
-  for (var i = 1; i < 808; i++) {
+const randomPopularityCount = async () => {
+  for (var i = 1; i < 810; i++) {
     const pokemon = await Pokemon.findOne({
       where: { pokedexNumber: i },
     });
-    // const dataValues = pokemon.dataValues;
-    // console.log(dataValues.statTotal);
-    const statTotal =
-      pokemon.statHp +
-      pokemon.statAttack +
-      pokemon.statDefense +
-      pokemon.statSpecialAttack +
-      pokemon.statSpecialDefense +
-      pokemon.statSpeed;
-    console.log(statTotal);
-    pokemon.update({
-      statTotal: statTotal,
-    });
+    const rand = Math.floor(Math.random() * 5);
+    pokemon.update({ count: rand });
   }
 };
+
+// const statTotal = async () => {
+//   for (var i = 1; i < 808; i++) {
+//     const pokemon = await Pokemon.findOne({
+//       where: { pokedexNumber: i },
+//     });
+//     // const dataValues = pokemon.dataValues;
+//     // console.log(dataValues.statTotal);
+//     const statTotal =
+//       pokemon.statHp +
+//       pokemon.statAttack +
+//       pokemon.statDefense +
+//       pokemon.statSpecialAttack +
+//       pokemon.statSpecialDefense +
+//       pokemon.statSpeed;
+//     console.log(statTotal);
+//     pokemon.update({
+//       statTotal: statTotal,
+//     });
+//   }
+// };
 
 // const fixHp = async () => {
 //   let counter = 1;
